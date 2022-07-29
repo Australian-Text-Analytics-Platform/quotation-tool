@@ -1,7 +1,5 @@
 # Quotation Tool
 
-## Sydney Informatics Hub
-
 <b>Abstract:</b> This QuotationTool can be used to extract quotes from a text. In addition to extracting the quotes, the tool also provides information about who the speakers are, the location of the quotes (and the speakers) within the text, the identified named entities, etc., which can be useful for your text analysis.
 
 ## Setup
