@@ -1,4 +1,4 @@
-# HASS-29: Quotation Tool
+# Quotation Tool
 
 ## Sydney Informatics Hub
 
