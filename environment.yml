@@ -7,7 +7,7 @@ channels:
   
 dependencies:
   # Try to install everything via conda where possible,
-  #   makes for simpler and quicker installs
+  # makes for simpler and quicker installs
   - python=3.8.13
   - numpy
   - pandas
@@ -20,3 +20,4 @@ dependencies:
   - pip
   - pip:
       - pymongo==4.1.1
+      - pyexcelerate
