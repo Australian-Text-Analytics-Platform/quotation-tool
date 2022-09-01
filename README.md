@@ -7,6 +7,7 @@ This tool has been designed for use with minimal setup from users. You are able 
 
 1. [![Binder](https://binderhub.atap-binder.cloud.edu.au/badge_logo.svg)](https://binderhub.atap-binder.cloud.edu.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)
 2. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)  
+
 <b>Note:</b> this may take a few minutes to launch as Binder needs to install the dependencies for the tool.
 
 ## Load the data
