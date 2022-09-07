@@ -5,9 +5,9 @@
 ## Setup
 This tool has been designed for use with minimal setup from users. You are able to run it in the cloud and any dependencies with other packages will be installed for you automatically. In order to launch and use the tool, you just need to click the below icon.
 
-<b>Note:</b> Please try to use the first link to access the tool via BinderHub. You can use either your AAF, Microsoft or Google credentials to login. If you are unable to access the tool via the first link, then use the second link (this is the free Binder version, with less CPU and memory capacity).
+<b>Note:</b> Please try to use the first link to access the tool via BinderHub (up to 8GB memory). You can use either your AAF, Microsoft or Google credentials to login. If you are unable to access the tool via the first link, then use the second link (it's the free version of Binder, with less CPU and memory capacity - up to 2GB only).
 
-1. This link is for people with Australian Institute Affiliations (AAF, Microsoft or Google authentication required) 
+1. This link is for people with Australian Institute Affiliations (authentication required) 
 [![Binder](https://binderhub.atap-binder.cloud.edu.au/badge_logo.svg)](https://binderhub.atap-binder.cloud.edu.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)  
 
 2. This link is for people without Australian institutional affiliations  
