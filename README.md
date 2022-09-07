@@ -7,7 +7,7 @@ This tool has been designed for use with minimal setup from users. You are able 
 
 <b>Note:</b> Please try to use the first link to access the tool via BinderHub (up to 8GB memory). You can use either your AAF, Microsoft or Google credentials to login. 
 
-1. This link is for people with Australian Institute Affiliations (authentication required) 
+1. This is the preferred link, CILogon authentication is required where you can sign in with your institutional logon or Google/Microsoft account.
 [![Binder](https://binderhub.atap-binder.cloud.edu.au/badge_logo.svg)](https://binderhub.atap-binder.cloud.edu.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)  
 
 If you are unable to access the tool via the first link above, then use the second link below. This is the free version of Binder, with less CPU and memory capacity (up to 2GB only).  
