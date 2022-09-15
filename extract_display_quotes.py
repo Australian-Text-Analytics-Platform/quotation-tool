@@ -98,9 +98,6 @@ class QuotationTool():
         '''
         Initiate the QuotationTool
         '''
-        # initiate the quote extractor
-        qe = QuoteExtractor(config)
-        
         # initiate the app_logger
         self.app_logger = utils.create_logger('quote_extractor', log_dir='logs', 
                                          logger_level=logging.INFO,
@@ -369,12 +366,13 @@ class QuotationTool():
         for row in tqdm(self.text_df.itertuples(), total=len(self.text_df)):
             text_id = row.text_id
             text_name = row.text_name
+            
             try:
                 # process text using spacy
                 doc = self.nlp_preprocess(row.text)
                 
                 # extract the quotes
-                quotes = qe.extract_quotes(doc_id=text_id, doc=doc, 
+                quotes = extract_quotes(doc_id=text_id, doc=doc, 
                                         write_tree=False)
                 
                 # extract the named entities
