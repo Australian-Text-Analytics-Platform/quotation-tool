@@ -51,12 +51,14 @@ from IPython.display import display, clear_output, FileLink
 path  = './'
 clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
 os.chdir(path)
-os.system(clone)
+#os.system(clone)
 
 # import the quote extractor tool
 from config import config
 sys.path.insert(0,'./GenderGapTracker/NLP/main')
+#sys.path.insert(0,'./GenderGapTracker/nlp/english')
 from quote_extractor import extract_quotes
+#from quote_extractor import QuoteExtractor
 import utils
 
 
@@ -96,6 +98,9 @@ class QuotationTool():
         '''
         Initiate the QuotationTool
         '''
+        # initiate the quote extractor
+        qe = QuoteExtractor(config)
+        
         # initiate the app_logger
         self.app_logger = utils.create_logger('quote_extractor', log_dir='logs', 
                                          logger_level=logging.INFO,
@@ -369,7 +374,7 @@ class QuotationTool():
                 doc = self.nlp_preprocess(row.text)
                 
                 # extract the quotes
-                quotes = extract_quotes(doc_id=text_id, doc=doc, 
+                quotes = qe.extract_quotes(doc_id=text_id, doc=doc, 
                                         write_tree=False)
                 
                 # extract the named entities
