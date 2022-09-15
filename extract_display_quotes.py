@@ -51,12 +51,14 @@ from IPython.display import display, clear_output, FileLink
 path  = './'
 clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
 os.chdir(path)
-os.system(clone)
+#os.system(clone)
 
 # import the quote extractor tool
 from config import config
 sys.path.insert(0,'./GenderGapTracker/NLP/main')
+#sys.path.insert(0,'./GenderGapTracker/nlp/english')
 from quote_extractor import extract_quotes
+#from quote_extractor import QuoteExtractor
 import utils
 
 
@@ -364,6 +366,7 @@ class QuotationTool():
         for row in tqdm(self.text_df.itertuples(), total=len(self.text_df)):
             text_id = row.text_id
             text_name = row.text_name
+            
             try:
                 # process text using spacy
                 doc = self.nlp_preprocess(row.text)
