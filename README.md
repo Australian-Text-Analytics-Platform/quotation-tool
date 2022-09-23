@@ -15,6 +15,21 @@ If you are unable to access the tool via the first link above, then use the seco
 
 <b>Note:</b> this may take a few minutes to launch as Binder needs to install the dependencies for the tool.
 
+### Setting up on your own computer
+
+If you know your way around the command line and are comfortable installing software, you might want to set up your own computer to run these notebooks.
+
+You need to install the [Anaconda Python distribution](https://www.anaconda.com/products/distribution).
+
+Then the steps to set up an environment with all the required packages:
+
+* Open your terminal
+* Clone the repository: git clone https://github.com/Australian-Text-Analytics-Platform/quotation-tool
+* Change to the 'quote_tool' directory: cd quote_tool
+* Create the environment: conda env create -f environment.yml
+* Activate the environment: conda activate quote_tool
+* Run Jupyter notebook: jupyter notebook quote_extractor_notebook.ipynb
+
 ## Load the data
 <table style='margin-left: 10px'><tr>
 <td> <img width='45' src='./img/txt_icon.png'/> </td>
