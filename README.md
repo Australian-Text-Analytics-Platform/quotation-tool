@@ -19,7 +19,7 @@ If you are unable to access the tool via the first link above, then use the seco
 
 If you know your way around the command line and are comfortable installing software, you might want to set up your own computer to run these notebooks.
 
-You need to install the [Anaconda Python distribution](https://www.anaconda.com/products/distribution). Then, open your terminal and follow the below steps to set up an environment with all the required packages:
+You need to install the [Anaconda Python distribution](https://www.anaconda.com/products/distribution). Then, open your terminal (on MacOS) or your [Git](https://github.com/git-guides/install-git#:~:text=Git%20can%20be%20installed%20on,most%20Mac%20and%20Linux%20machines!) command line (on Windows) and follow the below steps to set up an environment with all the required packages:
 
 * Clone the repository: git clone https://github.com/Australian-Text-Analytics-Platform/quotation-tool
 * Change to the 'quote_tool' directory: cd quote_tool
