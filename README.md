@@ -5,27 +5,11 @@
 ## Setup
 This tool has been designed for use with minimal setup from users. You are able to run it in the cloud and any dependencies with other packages will be installed for you automatically. In order to launch and use the tool, you just need to click the below icon.
 
-1. This is the preferred link, CILogon authentication is required where you can sign in with your institutional logon or Google/Microsoft account.  
 [![Binder](https://binderhub.atap-binder.cloud.edu.au/badge_logo.svg)](https://binderhub.atap-binder.cloud.edu.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/GGT_update_20220915?labpath=quote_extractor_notebook.ipynb)  
 
-If you are unable to access the tool via the first link above, then use the second link below. This is the free version of Binder, with less CPU and memory capacity (up to 2GB only).  
+<b>Note:</b> CILogon authentication is required. You can use your institutional, Google or Microsoft account to login.  
 
-2. This link is for people without Australian institutional affiliations  
-<<..Under maintenance..>>   
-
-<b>Note:</b> this may take a few minutes to launch as Binder needs to install the dependencies for the tool.
-
-### Setting up on your own computer
-
-If you know your way around the command line and are comfortable installing software, you might want to set up your own computer to run this notebook. 
-
-Firstly, you need to install the [Anaconda Python distribution](https://www.anaconda.com/products/distribution) (You may also need to install [Git](https://github.com/git-guides/install-git#:~:text=Git%20can%20be%20installed%20on,most%20Mac%20and%20Linux%20machines!) if you are on Windows). Then, open your terminal (on MacOS) or your Git command line (on Windows) and follow the below steps to set up an environment with all the required packages:
-
-* Clone the repository: git clone https://github.com/Australian-Text-Analytics-Platform/quotation-tool
-* Change to the 'quote_tool' directory: cd quote_tool
-* Create the environment: conda env create -f environment.yml
-* Activate the environment: conda activate quote_tool
-* Run Jupyter notebook: jupyter notebook quote_extractor_notebook.ipynb
+It may take a few minutes for Binder to launch the notebook and install the dependencies for the tool. Please be patient.
 
 ## Load the data
 <table style='margin-left: 10px'><tr>
