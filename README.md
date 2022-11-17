@@ -5,13 +5,8 @@
 ## Setup
 This tool has been designed for use with minimal setup from users. You are able to run it in the cloud and any dependencies with other packages will be installed for you automatically. In order to launch and use the tool, you just need to click the below icon.
 
-1. This is the preferred link, CILogon authentication is required where you can sign in with your institutional logon or Google/Microsoft account.  
+<b>Note:</b> CILogon authentication is required. You can use your institutional, Google or Microsoft account to login.  
 [![Binder](https://binderhub.atap-binder.cloud.edu.au/badge_logo.svg)](https://binderhub.atap-binder.cloud.edu.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/GGT_update_20220915?labpath=quote_extractor_notebook.ipynb)  
-
-If you are unable to access the tool via the first link above, then use the second link below. This is the free version of Binder, with less CPU and memory capacity (up to 2GB only).  
-
-2. This link is for people without Australian institutional affiliations  
-<<..Under maintenance..>>   
 
 <b>Note:</b> this may take a few minutes to launch as Binder needs to install the dependencies for the tool.
 
