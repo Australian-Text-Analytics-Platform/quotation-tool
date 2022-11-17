@@ -9,7 +9,7 @@ This tool has been designed for use with minimal setup from users. You are able 
 
 <b>Note:</b> CILogon authentication is required. You can use your institutional, Google or Microsoft account to login.  
 
-This may take a few minutes to launch as Binder needs to install the dependencies for the tool.
+It may take a few minutes for Binder to launch the notebook and install the dependencies for the tool. Please be patient.
 
 ## Load the data
 <table style='margin-left: 10px'><tr>
