@@ -9,6 +9,10 @@ This tool has been designed for use with minimal setup from users. You are able 
 
 <b>Note:</b> CILogon authentication is required. You can use your institutional, Google or Microsoft account to login.  
 
+If you do not have access to any of the above accounts, you can use the below link to access the tool (this is a free Binder version, limited to 2GB memory only).   
+
+
+
 It may take a few minutes for Binder to launch the notebook and install the dependencies for the tool. Please be patient.
 
 ## Load the data
