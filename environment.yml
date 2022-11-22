@@ -16,7 +16,7 @@ dependencies:
   - spacy=3.3.1
   - spacy-model-en_core_web_lg
   - nltk=3.7
-  - ipywidgets=7.6.5
+  - ipywidgets=8.0.2
   - pip
   - pip:
       - pymongo==4.1.1
