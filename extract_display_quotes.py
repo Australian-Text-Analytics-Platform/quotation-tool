@@ -206,7 +206,7 @@ class QuotationTool():
             # check for unknown characters and display warning if any
             unknown_count = temp['text'].count('�')
             if unknown_count>0:
-                print('We identified {} unknown character(s) in the following text: {}'.format(unknown_count, file['metadata']['name'][:-4]))
+                print('We identified {} unknown character(s) in the following text: {}'.format(unknown_count, file['name'][:-4]))
         
         return [temp]
 
@@ -230,7 +230,7 @@ class QuotationTool():
             
         # check if the column text and text_name present in the table, if not, skip the current spreadsheet
         if ('text' not in temp_df.columns) or ('text_name' not in temp_df.columns):
-            print('File {} does not contain the required header "text" and "text_name"'.format(file['metadata']['name']))
+            print('File {} does not contain the required header "text" and "text_name"'.format(self.file_uploader.value[n]['name']))
             return []
         
         # return a list of dict objects
