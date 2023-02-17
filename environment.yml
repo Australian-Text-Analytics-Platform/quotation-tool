@@ -15,6 +15,7 @@ dependencies:
   - matplotlib
   - spacy=3.3.1
   - spacy-model-en_core_web_lg
+  - spacy-model-en_core_web_sm=3.3.0
   - nltk=3.7
   - ipywidgets=8.0.2
   - pyarrow==8.0.0
