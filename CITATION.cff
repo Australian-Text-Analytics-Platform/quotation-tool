@@ -1,0 +1,45 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Quotation Tool
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Sony
+    family-names: Jufri
+    email: sony.jufri@sydney.edu.au
+    affiliation: >-
+      Sydney Informatics Hub, a core research facility of
+      the University of Sydney
+  - given-names: Chao
+    family-names: Sun
+    email: chao.sun@sydney.edu.au
+    affiliation: >-
+      Sydney Informatics Hub, a core research facility of
+      the University of Sydney
+repository-code: >-
+  https://github.com/Australian-Text-Analytics-Platform/quotation-tool
+abstract: >-
+  This Quotation Tool is developed for algorithmically
+  extracting quotes from plain texts. In addition to quote
+  extraction function, the tool execute embeds Name Entity
+  Recognition (NER) on the extracted speakers and quotations
+  information, in order to generate more insights for the
+  text analysis task. As an output of collaborative work
+  between the Sydney Informatics Hub (SIH) and the Sydney
+  Corpus Lab (SCL), the quotation tool is part of the
+  Australian Text Analytics Platform program and the HASS
+  Research Data Commons and Indigenous Research Capability
+  Program.
+keywords:
+  - quote
+  - quotation tool
+  - named entity recognition
+  - extract quote
+  - quote extraction
+license: Apache-2.0
+version: '1.0'
+date-released: '2022-11-29'
