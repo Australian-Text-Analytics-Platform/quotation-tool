@@ -61,6 +61,9 @@ from quote_extractor import extract_quotes
 #from quote_extractor import QuoteExtractor
 import utils
 
+# import corpus builder
+from juxtorpus.corpus.app import App
+
 
 class DownloadFileLink(FileLink):
     '''
@@ -114,6 +117,9 @@ class QuotationTool():
         self.quotes_df = None
         self.large_texts = []
         self.large_file_size = 1000000
+        
+        # initiate the App
+        self.app = App()
         
         # initiate the variables for file uploading
         self.file_uploader = widgets.FileUpload(
@@ -339,6 +345,22 @@ class QuotationTool():
         if deduplication:
             self.text_df.drop_duplicates(subset='text_id', keep='first', inplace=True)
     
+    
+    def process_app(self):
+        uploaded_corpus = self.app.REGISTRY.keys()
+        
+        for each_corpus in uploaded_corpus:
+            corpus = self.app.REGISTRY.get(each_corpus)
+            if 'text_name' not in corpus.meta.keys():
+                print("The uploaded csv file does not include a 'text_name' column")
+                print("Please include the 'text_name' column and re-upload your csv file!")
+            else:
+                temp_df = pd.DataFrame(zip(corpus.meta['text_name'].series().to_list(),
+                                                corpus.texts()), 
+                                            columns=['text_name','text'])
+                temp_df = self.hash_gen(temp_df)
+                self.text_df = pd.concat([self.text_df,temp_df])
+        
     
     def extract_inc_ent(
             self, 

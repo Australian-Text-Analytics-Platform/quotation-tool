@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "juxtorpus"
+version = "0.1.0"
+description = ""
+authors = ["jack <huen.chan@sydney.edu.au>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^1.4.4"
+pyarrow = "^9.0.0"
+frozendict = "^2.3.4"
+# spacy
+spacy = "^v3.4.1"
+thinc-apple-ops = { extras = ["apple"], version = "^0.1.0", platform = "apple" }
+en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.4.0/en_core_web_sm-3.4.0-py3-none-any.whl" }
+# huggingface
+# ipywidget
+ipywidgets = "^7.7.1"    # 8.x.x latest - backwards compatibility kept for FileUpload widget
+# algos
+rake-nltk = "^1.0.6"
+# viz
+wordcloud = "^1.8.2.2"
+# file checkers
+chardet = "^5.0.0"
+# loggers
+colorlog = "^6.7.0"
+transformers = "^4.23.1"
+scipy = "^1.9.3"
+torch = "^1.12.1"
+sklearn = "^0.0"
+atap-widgets = { version = "^0.3.0", python = ">=3.8,<3.11" }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
