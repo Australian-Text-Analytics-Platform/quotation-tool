@@ -51,7 +51,7 @@ from IPython.display import display, clear_output, FileLink
 path  = './'
 clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
 os.chdir(path)
-os.system(clone)
+#os.system(clone)
 
 # import the quote extractor tool
 from config import config
