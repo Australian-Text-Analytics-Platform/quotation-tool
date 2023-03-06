@@ -500,7 +500,7 @@ class SemanticTagger():
                 text: the text to be cleaned
             '''
             # clean empty spaces in the text
-            text = re.sub(r'\n+','', text)
+            text = re.sub(r'\n','', text)
             
             return text
         
