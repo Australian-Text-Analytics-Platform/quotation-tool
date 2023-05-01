@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "quotation-tool"
+version = "0.1.0"
+description = "Quotation Tool: Extracting quotes, speakers and named entities from text"
+authors = ["siufri"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.11"
+numpy = "^1.24.3"
+pandas = ">=1.4"
+openpyxl = "^3.1.2"
+matplotlib = "^3.7.1"
+spacy = "^3.3.1"
+nltk = "3.7"
+ipywidgets = ">=7.7.2"
+pymongo = "4.1.1"
+PyExcelerate = "^0.10.0"
+en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.0/en_core_web_lg-3.4.0-py3-none-any.whl" }
+juxtorpus = {git = "git@github.com:Sydney-Informatics-Hub/juxtorpus.git", rev = "feat/integration_concordance"}
+
+# gender-gap-tracker is not set up as a python project. (i.e. no setup.py or pyproject.toml)
+#gender-gap-tracker = {git = "https://github.com/sfu-discourse-lab/GenderGapTracker", rev = "e0834fb12abd9caf3d02c4cee0b16369d4a8cd31"}
+
+[tool.poetry.dev-dependencies]
+jupyterlab = "^3.6"
+jupyterlab-vim = "^0.15"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
