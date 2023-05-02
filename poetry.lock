@@ -759,7 +759,6 @@ spacy = ">=3.4.0,<3.5.0"
 [package.source]
 type = "url"
 url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.0/en_core_web_lg-3.4.0-py3-none-any.whl"
-
 [[package]]
 name = "en-core-web-sm"
 version = "3.4.0"
@@ -777,7 +776,6 @@ spacy = ">=3.4.0,<3.5.0"
 [package.source]
 type = "url"
 url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.4.0/en_core_web_sm-3.4.0-py3-none-any.whl"
-
 [[package]]
 name = "et-xmlfile"
 version = "1.1.0"
@@ -4290,4 +4288,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9, <3.11"
-content-hash = "07c3a8a8b1baa6718a24105cafde2d2ef5b6edbf8840d0c58b966ea322f33d1f"
+content-hash = "bb21030948cc385e39241c4916f2874a399e794be31123bd16c86786410a3b10"
