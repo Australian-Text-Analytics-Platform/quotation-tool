@@ -20,7 +20,6 @@ import io
 import sys
 import codecs
 import logging
-import traceback
 import warnings
 from collections import Counter
 import hashlib
@@ -55,7 +54,7 @@ clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
 # os.system(clone)
 
 # import the quote extractor tool
-from config import config
+from quotation_tool.config import config
 
 sys.path.insert(0, './GenderGapTracker/nlp/english')
 from quote_extractor import QuoteExtractor
