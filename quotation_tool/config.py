@@ -1,6 +1,6 @@
 host = ["mongo0", "mongo1", "mongo2"]
 # host = "localhost"
-prefix = "." if (host == "localhost") else "./GenderGapTracker/nlp/english"
+prefix = "." if (host == "localhost") else "./quotation_tool/gender_gap_tracker"
 
 config = {
     "MONGO_ARGS": {

@@ -17,7 +17,6 @@ The Gender Gap Tracker: Using Natural Language Processing to measure gender bias
 # import required packages
 import os
 import io
-import sys
 import codecs
 import logging
 import warnings
@@ -57,8 +56,8 @@ from IPython.display import display, clear_output, FileLink
 from quotation_tool.config import config
 
 # sys.path.insert(0, './GenderGapTracker/nlp/english')
-from quotation_tool.quote_extractor import QuoteExtractor
-from quotation_tool import utils
+from quotation_tool.gender_gap_tracker.quote_extractor import QuoteExtractor
+from quotation_tool.gender_gap_tracker import utils
 from juxtorpus.corpus import Corpus
 from juxtorpus.corpus.meta import SeriesMeta
 

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from multiprocessing import Pool, cpu_count
 import spacy
 
-from quotation_tool import utils
+from quotation_tool.gender_gap_tracker import utils
 
 logger = utils.create_logger(
     "quote_extractor",
