@@ -49,16 +49,16 @@ from IPython.display import display, clear_output, FileLink
 
 # clone the GenderGapTracker GitHub page
 # path = '../'
-clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
+# clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
 # os.chdir(path)
 # os.system(clone)
 
 # import the quote extractor tool
 from quotation_tool.config import config
 
-sys.path.insert(0, './GenderGapTracker/nlp/english')
-from quote_extractor import QuoteExtractor
-import utils
+# sys.path.insert(0, './GenderGapTracker/nlp/english')
+from quotation_tool.quote_extractor import QuoteExtractor
+from quotation_tool import utils
 from juxtorpus.corpus import Corpus
 from juxtorpus.corpus.meta import SeriesMeta
 
