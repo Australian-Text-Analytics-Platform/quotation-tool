@@ -152,6 +152,16 @@ six = "*"
 [package.extras]
 test = ["astroid", "pytest"]
 
+[[package]]
+name = "atap-widgets"
+version = "0.5.0"
+description = "Interactive widgets used by the Australian Text Analytics Platform"
+category = "dev"
+optional = false
+python-versions = ">=3.9,<3.11"
+files = []
+develop = false
+
 [package.dependencies]
 bokeh = "^2.0"
 dask = {version = "^2022.9.2", extras = ["dataframe"]}
@@ -162,6 +172,12 @@ pandas = "^1.3"
 spacy = "^3.0"
 textacy = "*"
 xlsxwriter = "^3"
+
+[package.source]
+type = "git"
+url = "git@github.com:Australian-Text-Analytics-Platform/atap_widgets.git"
+reference = "a93db3674590320bf5de61748641c20d05fb9c9f"
+resolved_reference = "a93db3674590320bf5de61748641c20d05fb9c9f"
 
 [[package]]
 name = "attrs"

@@ -25,6 +25,7 @@ juxtorpus = {git = "git@github.com:Sydney-Informatics-Hub/juxtorpus.git", rev = 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.6"
 jupyterlab-vim = "^0.15"
+atap_widgets = {git = "git@github.com:Australian-Text-Analytics-Platform/atap_widgets.git", rev = "a93db3674590320bf5de61748641c20d05fb9c9f"}
 
 [build-system]
 requires = ["poetry-core"]
