@@ -7,8 +7,10 @@ from statistics import mean
 from datetime import datetime, timedelta
 from multiprocessing import Pool, cpu_count
 import spacy
+from importlib_resources import files
 
 from quotation_tool.gender_gap_tracker import utils
+from quotation_tool import gender_gap_tracker
 
 logger = utils.create_logger(
     "quote_extractor",
@@ -57,8 +59,13 @@ class QuoteExtractor:
     def __init__(self, config) -> None:
         self.config = config
         self.nlp = config["spacy_lang"]
+        # self.quote_verbs = [
+        #     verb for verb in open(config["NLP"]["QUOTE_VERBS"]).read().split()
+        # ]
+        # allow reading resource when installed as a package
+        verbs = files(gender_gap_tracker).joinpath(config["NLP"]["QUOTE_VERBS"]).read_text().split()
         self.quote_verbs = [
-            verb for verb in open(config["NLP"]["QUOTE_VERBS"]).read().split()
+            verb for verb in verbs
         ]
 
     def get_pretty_index(self, key):
