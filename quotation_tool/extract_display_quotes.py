@@ -162,17 +162,17 @@ class QuotationTool(object):
         os.makedirs('../output', exist_ok=True)
 
     @classmethod
-    def from_corpus(cls, corpus: Corpus, text_name_meta_id: str) -> 'QuotationTool':
+    def from_corpus(cls, corpus: Corpus, doc_name_meta_id: str) -> 'QuotationTool':
         """ Build Quotation Tool from corpus.
 
         :param corpus: Corpus
-        :param text_name_meta_id: meta used as unique document identifier.
+        :param doc_name_meta_id: meta used as unique document identifier.
         :return: QuotationTool
         """
         df = corpus.to_dataframe().rename({corpus.COL_DOC: 'text'}, axis=1)
-        text_name_meta = corpus.meta.get(text_name_meta_id, False)
+        text_name_meta = corpus.meta.get(doc_name_meta_id, False)
         if not text_name_meta:
-            raise KeyError(f"{text_name_meta_id} does not exist. Select one of: {', '.join(corpus.meta.keys())}")
+            raise KeyError(f"{doc_name_meta_id} does not exist. Select one of: {', '.join(corpus.meta.keys())}")
         if not isinstance(text_name_meta, SeriesMeta):
             raise NotImplementedError(f"Only {SeriesMeta.__class__.__name__} is supported for text_name_meta_id.")
         if not pd.api.types.is_string_dtype(text_name_meta.dtype):
