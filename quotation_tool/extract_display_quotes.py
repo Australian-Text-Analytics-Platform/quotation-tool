@@ -22,7 +22,7 @@ import logging
 import warnings
 from collections import Counter
 import hashlib
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from zipfile import ZipFile
 from pathlib import Path
 
