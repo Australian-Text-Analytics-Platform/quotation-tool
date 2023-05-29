@@ -3,6 +3,6 @@
 # jetbrains
 .idea/
 # venvs
-.venv/
+.venv*/
 # jupyter notebook
 **/.ipynb_checkpoints/*
