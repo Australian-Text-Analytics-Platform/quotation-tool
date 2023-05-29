@@ -17,14 +17,12 @@ The Gender Gap Tracker: Using Natural Language Processing to measure gender bias
 # import required packages
 import os
 import io
-import sys
 import codecs
 import logging
-import traceback
 import warnings
 from collections import Counter
 import hashlib
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from zipfile import ZipFile
 from pathlib import Path
 
@@ -49,17 +47,17 @@ from ipywidgets import Layout
 from IPython.display import display, clear_output, FileLink
 
 # clone the GenderGapTracker GitHub page
-path = './'
-clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
-os.chdir(path)
+# path = '../'
+# clone = 'git clone https://github.com/sfu-discourse-lab/GenderGapTracker'
+# os.chdir(path)
 # os.system(clone)
 
 # import the quote extractor tool
-from config import config
+from quotation_tool.config import config
 
-sys.path.insert(0, './GenderGapTracker/nlp/english')
-from quote_extractor import QuoteExtractor
-import utils
+# sys.path.insert(0, './GenderGapTracker/nlp/english')
+from quotation_tool.gender_gap_tracker.quote_extractor import QuoteExtractor
+from quotation_tool.gender_gap_tracker import utils
 from juxtorpus.corpus import Corpus
 from juxtorpus.corpus.meta import SeriesMeta
 
@@ -104,7 +102,7 @@ class QuotationTool(object):
         self.qt = QuoteExtractor(config)
 
         # initiate the app_logger
-        self.app_logger = utils.create_logger('quote_extractor', log_dir='logs',
+        self.app_logger = utils.create_logger('quote_extractor', log_dir='../logs',
                                               logger_level=logging.INFO,
                                               file_log_level=logging.INFO)
 
@@ -161,20 +159,20 @@ class QuotationTool(object):
         self.current_text = None
 
         # create an output folder if not already exist
-        os.makedirs('output', exist_ok=True)
+        os.makedirs('../output', exist_ok=True)
 
     @classmethod
-    def from_corpus(cls, corpus: Corpus, text_name_meta_id: str) -> 'QuotationTool':
+    def from_corpus(cls, corpus: Corpus, doc_name_meta_id: str) -> 'QuotationTool':
         """ Build Quotation Tool from corpus.
 
         :param corpus: Corpus
-        :param text_name_meta_id: meta used as unique document identifier.
+        :param doc_name_meta_id: meta used as unique document identifier.
         :return: QuotationTool
         """
         df = corpus.to_dataframe().rename({corpus.COL_DOC: 'text'}, axis=1)
-        text_name_meta = corpus.meta.get(text_name_meta_id, False)
+        text_name_meta = corpus.meta.get(doc_name_meta_id, False)
         if not text_name_meta:
-            raise KeyError(f"{text_name_meta_id} does not exist. Select one of: {', '.join(corpus.meta.keys())}")
+            raise KeyError(f"{doc_name_meta_id} does not exist. Select one of: {', '.join(corpus.meta.keys())}")
         if not isinstance(text_name_meta, SeriesMeta):
             raise NotImplementedError(f"Only {SeriesMeta.__class__.__name__} is supported for text_name_meta_id.")
         if not pd.api.types.is_string_dtype(text_name_meta.dtype):
@@ -649,7 +647,7 @@ class QuotationTool(object):
             with save_out:
                 try:
                     # set the output folder for saving
-                    out_dir = './output/'
+                    out_dir = '../output/'
                     text_name = text.value
                     file_name = '-'.join(text_name.split()) + '.html'
 
@@ -754,7 +752,7 @@ class QuotationTool(object):
             with save_out:
                 if self.figs != []:
                     # set the output folder for saving
-                    out_dir = './output/'
+                    out_dir = '../output/'
 
                     print('Top entities saved! Click below to download:')
                     # save the top entities as jpg files

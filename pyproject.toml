@@ -17,7 +17,7 @@ ipywidgets = ">=7.7.2"
 pymongo = "4.1.1"
 PyExcelerate = "^0.10.0"
 en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.0/en_core_web_lg-3.4.0-py3-none-any.whl" }
-juxtorpus = {git = "git@github.com:Sydney-Informatics-Hub/juxtorpus.git", rev = "f9eeec13b870cceeac0c41a5b9a64b0339498175"}
+juxtorpus = {git = "https://github.com/Sydney-Informatics-Hub/juxtorpus.git", rev = "f368dacf575a1b61bd0e3abc71946420e41ba311"}
 
 # gender-gap-tracker is not set up as a python project. (i.e. no setup.py or pyproject.toml)
 #gender-gap-tracker = {git = "https://github.com/sfu-discourse-lab/GenderGapTracker", rev = "e0834fb12abd9caf3d02c4cee0b16369d4a8cd31"}
@@ -25,6 +25,7 @@ juxtorpus = {git = "git@github.com:Sydney-Informatics-Hub/juxtorpus.git", rev = 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.6"
 jupyterlab-vim = "^0.15"
+atap_widgets = {git = "https://github.com/Australian-Text-Analytics-Platform/atap_widgets.git", rev = "0ddc4cadb0f10b7bb466bbf14b13f5adb8eeea61"}
 
 [build-system]
 requires = ["poetry-core"]
