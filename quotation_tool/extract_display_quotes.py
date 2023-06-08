@@ -102,7 +102,7 @@ class QuotationTool(object):
         self.qt = QuoteExtractor(config)
 
         # initiate the app_logger
-        self.app_logger = utils.create_logger('quote_extractor', log_dir='../logs',
+        self.app_logger = utils.create_logger('quote_extractor', log_dir='./logs',
                                               logger_level=logging.INFO,
                                               file_log_level=logging.INFO)
 
@@ -159,7 +159,7 @@ class QuotationTool(object):
         self.current_text = None
 
         # create an output folder if not already exist
-        os.makedirs('../output', exist_ok=True)
+        os.makedirs('./output', exist_ok=True)
 
     @classmethod
     def from_corpus(cls, corpus: Corpus, doc_name_meta_id: str) -> 'QuotationTool':
