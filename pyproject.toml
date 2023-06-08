@@ -17,7 +17,7 @@ ipywidgets = ">=7.7.2"
 pymongo = "4.1.1"
 PyExcelerate = "^0.10.0"
 en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.0/en_core_web_lg-3.4.0-py3-none-any.whl" }
-juxtorpus = {git = "https://github.com/Sydney-Informatics-Hub/juxtorpus.git", rev = "798e44cd84309a85b89b1ddc48542531260ed965"} # feat/rm_dep_qt_atapwidgets
+juxtorpus = {git = "https://github.com/Sydney-Informatics-Hub/juxtorpus.git", rev = "6c2facac3d7c51fa606199e0eb7d5b44d6f0bbf5"} # feat/rm_dep_qt_atapwidgets
 
 # gender-gap-tracker is not set up as a python project. (i.e. no setup.py or pyproject.toml)
 #gender-gap-tracker = {git = "https://github.com/sfu-discourse-lab/GenderGapTracker", rev = "e0834fb12abd9caf3d02c4cee0b16369d4a8cd31"}
