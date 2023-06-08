@@ -1,8 +1,7 @@
 # Configuration file for jupyter-notebook.
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## This is an application.
 
 ## The date format used by logging formatters for %(asctime)s
@@ -26,9 +25,9 @@
 #  Default: False
 # c.Application.show_config_json = False
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # JupyterApp(Application) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Base class for Jupyter applications
 
 ## Answer yes to any prompts.
@@ -67,9 +66,9 @@
 #  See also: Application.show_config_json
 # c.JupyterApp.show_config_json = False
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # NotebookApp(JupyterApp) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Set the Access-Control-Allow-Credentials: true header
 #  Default: False
 # c.NotebookApp.allow_credentials = False
@@ -375,6 +374,7 @@
 #  by the buffer manager.
 #  Default: 536870912
 # c.NotebookApp.max_buffer_size = 536870912
+c.NotebookApp.max_buffer_size = 6 * 1024 * 1024 * 1024
 
 ## Gets or sets a lower bound on the open file handles process resource limit.
 #  This may need to be increased if you run into an OSError: [Errno 24] Too many
@@ -577,9 +577,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: ''
 # c.NotebookApp.websocket_url = ''
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # ConnectionFileMixin(LoggingConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Mixin for configurable classes that work with connection files
 
 ## JSON file in which to store connection info [default: kernel-<pid>.json]
@@ -621,9 +621,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: 'tcp'
 # c.ConnectionFileMixin.transport = 'tcp'
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # KernelManager(ConnectionFileMixin) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Manages a single kernel in a subprocess on this host.
 #  
 #      This version starts kernels with Popen.
@@ -674,9 +674,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  See also: ConnectionFileMixin.transport
 # c.KernelManager.transport = 'tcp'
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Session(Configurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Object for handling serialization and sending of messages.
 #  
 #      The Session object handles building messages and sending them
@@ -783,9 +783,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: 'sjuf9909'
 # c.Session.username = 'sjuf9909'
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # MultiKernelManager(LoggingConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## A class for managing multiple kernels.
 
 ## The name of the default kernel to start
@@ -801,9 +801,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: True
 # c.MultiKernelManager.shared_context = True
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # MappingKernelManager(MultiKernelManager) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## A KernelManager that handles notebook mapping and HTTP error handling
 
 ## White list of allowed kernel message types.
@@ -865,9 +865,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  See also: MultiKernelManager.shared_context
 # c.MappingKernelManager.shared_context = True
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # KernelSpecManager(LoggingConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## List of allowed kernel names.
 #  
 #          By default, all installed kernels are allowed.
@@ -888,9 +888,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: set()
 # c.KernelSpecManager.whitelist = set()
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # ContentsManager(LoggingConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Base class for serving files and directories.
 #  
 #      This serves any text or binary file,
@@ -977,9 +977,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: 'Untitled'
 # c.ContentsManager.untitled_notebook = 'Untitled'
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # FileManagerMixin(Configurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Mixin for ContentsAPI classes that interact with the filesystem.
 #  
 #  Provides facilities for reading, writing, and copying both notebooks and
@@ -1000,9 +1000,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: True
 # c.FileManagerMixin.use_atomic_writing = True
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # FileContentsManager(FileManagerMixin, ContentsManager) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Allow access to hidden files
 #  See also: ContentsManager.allow_hidden
 # c.FileContentsManager.allow_hidden = False
@@ -1079,9 +1079,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  See also: FileManagerMixin.use_atomic_writing
 # c.FileContentsManager.use_atomic_writing = True
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # NotebookNotary(LoggingConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## A class for computing and verifying notebook signatures.
 
 ## The hashing algorithm used to sign notebooks.
@@ -1112,9 +1112,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: traitlets.Undefined
 # c.NotebookNotary.store_factory = traitlets.Undefined
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # AsyncMultiKernelManager(MultiKernelManager) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## The name of the default kernel to start
 #  See also: MultiKernelManager.default_kernel_name
 # c.AsyncMultiKernelManager.default_kernel_name = 'python3'
@@ -1133,9 +1133,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: False
 # c.AsyncMultiKernelManager.use_pending_kernels = False
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # AsyncMappingKernelManager(MappingKernelManager, AsyncMultiKernelManager) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## White list of allowed kernel message types.
 #  See also: MappingKernelManager.allowed_message_types
 # c.AsyncMappingKernelManager.allowed_message_types = []
@@ -1186,9 +1186,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  See also: AsyncMultiKernelManager.use_pending_kernels
 # c.AsyncMappingKernelManager.use_pending_kernels = False
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # GatewayKernelManager(AsyncMappingKernelManager) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## Kernel manager that supports remote kernels hosted by Jupyter Kernel or
 #  Enterprise Gateway.
 
@@ -1242,9 +1242,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  See also: AsyncMultiKernelManager.use_pending_kernels
 # c.GatewayKernelManager.use_pending_kernels = False
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # GatewayKernelSpecManager(KernelSpecManager) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## List of allowed kernel names.
 #  See also: KernelSpecManager.allowed_kernelspecs
 # c.GatewayKernelSpecManager.allowed_kernelspecs = set()
@@ -1261,9 +1261,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  See also: KernelSpecManager.whitelist
 # c.GatewayKernelSpecManager.whitelist = set()
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # GatewayClient(SingletonConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## This class manages the configuration.  It's its own singleton class so that we
 #         can share these values across all objects.  It also contains some helper methods
 #         to build request arguments out of the various config options.
@@ -1366,9 +1366,9 @@ c.NotebookApp.tornado_settings = {"websocket_max_message_size": 1000 * 1024 * 10
 #  Default: None
 # c.GatewayClient.ws_url = None
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # TerminalManager(LoggingConfigurable) configuration
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 ## 
 
 ## Timeout (in seconds) in which a terminal has been inactive and ready to be culled.
