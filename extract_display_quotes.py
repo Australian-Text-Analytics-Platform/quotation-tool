@@ -1015,7 +1015,7 @@ class QuotationTool():
         return enter_n, top_n_option
 
 
-def download(quotes_df: pd.DataFrame, output_dir: str, file_name: str) -> DownloadFileLink:
+def download(quotes_df: pd.DataFrame, output_dir: str, file_name: str):
     from pyexcelerate import Workbook
     sheet_data: dict = dict()
     sheet_data['full'] = [quotes_df.columns] + list(quotes_df.values)
@@ -1033,7 +1033,7 @@ def download(quotes_df: pd.DataFrame, output_dir: str, file_name: str) -> Downlo
     return DownloadFileLink(output_dir + file_name, file_name)
 
 
-def _sheet_verb_freqs(quotes_df) -> list[list]:
+def _sheet_verb_freqs(quotes_df):
     vcount = quotes_df.verb.apply(lambda v: v.strip().lower()).value_counts()
 
     header = [['verb', 'frequency']]
@@ -1041,7 +1041,7 @@ def _sheet_verb_freqs(quotes_df) -> list[list]:
     return header + flist
 
 
-def _sheet_is_floating_quote_freqs(quotes_df) -> list[list]:
+def _sheet_is_floating_quote_freqs(quotes_df):
     # is_floating_quote_frequencies
     vcount = quotes_df.is_floating_quote.value_counts()
 
@@ -1051,7 +1051,7 @@ def _sheet_is_floating_quote_freqs(quotes_df) -> list[list]:
     return header + flist
 
 
-def _sheet_speaker_freqs(quotes_df) -> list[list]:
+def _sheet_speaker_freqs(quotes_df):
     # vcount = quotes_df.speaker.apply(lambda s: s.lower()).value_counts()
     spkrs = [spkr
              for spkrs in
@@ -1066,7 +1066,7 @@ def _sheet_speaker_freqs(quotes_df) -> list[list]:
     return header + flist
 
 
-def _sheet_speaker_ent_name_freqs(quotes_df) -> list[list]:
+def _sheet_speaker_ent_name_freqs(quotes_df):
     spkr_names = (name for names in
                   quotes_df.speaker_entities.apply(lambda ents: set([ent[0].strip().lower() for ent in ents])).to_list()
                   for name in names)
@@ -1078,7 +1078,7 @@ def _sheet_speaker_ent_name_freqs(quotes_df) -> list[list]:
     return header + flist
 
 
-def _sheet_speaker_ent_type_freqs(quotes_df) -> list[list]:
+def _sheet_speaker_ent_type_freqs(quotes_df):
     spkr_ents = (ent for ents in
                  quotes_df.speaker_entities.apply(lambda ents: set([ent[1].strip().upper() for ent in ents])).to_list()
                  for ent in ents)
@@ -1090,7 +1090,7 @@ def _sheet_speaker_ent_type_freqs(quotes_df) -> list[list]:
     return header + flist
 
 
-def _sheet_quote_ent_name_freqs(quotes_df) -> list[list]:
+def _sheet_quote_ent_name_freqs(quotes_df):
     quote_names = (name for names in
                    quotes_df.quote_entities.apply(lambda ents: set([ent[0].strip().lower() for ent in ents])).to_list()
                    for name in names)
@@ -1102,7 +1102,7 @@ def _sheet_quote_ent_name_freqs(quotes_df) -> list[list]:
     return header + flist
 
 
-def _sheet_quote_ent_type_freqs(quotes_df) -> list[list]:
+def _sheet_quote_ent_type_freqs(quotes_df):
     quote_ents = (ent for ents in
                   quotes_df.quote_entities.apply(lambda ents: set([ent[1].strip().upper() for ent in ents])).to_list()
                   for ent in ents)
