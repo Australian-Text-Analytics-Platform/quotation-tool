@@ -1026,6 +1026,7 @@ def download(quotes_df: pd.DataFrame, output_dir: str, file_name: str):
     sheet_data['speaker_entity_type_frequencies'] = _sheet_speaker_ent_type_freqs(quotes_df)
     sheet_data['quote_entity_name_frequencies'] = _sheet_quote_ent_name_freqs(quotes_df)
     sheet_data['quote_entity_type_frequencies'] = _sheet_quote_ent_type_freqs(quotes_df)
+    sheet_data['quote_type_frequencies'] = _sheet_quote_type_freqs(quotes_df)
     wb = Workbook()
     for sheet_name, data in sheet_data.items():
         wb.new_sheet(sheet_name, data=data)
@@ -1109,6 +1110,15 @@ def _sheet_quote_ent_type_freqs(quotes_df):
     counter = Counter(quote_ents)
 
     header = [['quote entity type', 'frequency']]
+    flist = counter.most_common(len(counter))
+
+    return header + flist
+
+
+def _sheet_quote_type_freqs(quotes_df):
+    counter = Counter(quotes_df['quote_type'])
+
+    header = [['quote type', 'frequency']]
     flist = counter.most_common(len(counter))
 
     return header + flist
