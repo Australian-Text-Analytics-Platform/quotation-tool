@@ -14,31 +14,28 @@ The Gender Gap Tracker: Using Natural Language Processing to measure gender bias
 (https://doi.org/10.1371/journal.pone.0245533)
 '''
 
+import codecs
+import hashlib
+import io
+import logging
 # import required packages
 import os
-import io
 import sys
-import codecs
-import logging
-import traceback
 import warnings
 from collections import Counter
-import hashlib
-from tqdm import tqdm
-from zipfile import ZipFile
 from pathlib import Path
+from zipfile import ZipFile
 
-# matplotlib: visualization tool
-from matplotlib import pyplot as plt
-
+import nltk
 # pandas: tools for data processing
 import pandas as pd
-
 # spaCy and NLTK: natural language processing tools for working with language/text data
 import spacy
+# matplotlib: visualization tool
+from matplotlib import pyplot as plt
 from spacy import displacy
 from spacy.tokens import Span
-import nltk
+from tqdm import tqdm
 
 nltk.download('punkt')
 from nltk.tokenize import sent_tokenize
