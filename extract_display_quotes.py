@@ -58,6 +58,8 @@ sys.path.insert(0, './GenderGapTracker/nlp/english')
 from quote_extractor import QuoteExtractor
 import utils
 
+warnings.filterwarnings("ignore")
+
 
 class DownloadFileLink(FileLink):
     '''
@@ -549,7 +551,6 @@ class QuotationTool():
         if len(locs['QUOTE']) == 0 and len(locs['SPEAKER']) == 0:
             print('No speakers or quotes identified in the text. Select another text.')
 
-        warnings.filterwarnings("ignore")
         displacy.render(doc, style='span', options=options, jupyter=True)
         self.html = displacy.render(doc, style='span', options=options, jupyter=False, page=True)
         warnings.filterwarnings("default")
@@ -723,7 +724,6 @@ class QuotationTool():
 
         # function to define what happens when the save button is clicked
         def on_save_button_clicked(_):
-            warnings.filterwarnings("ignore")
             with save_out:
                 if self.figs != []:
                     # set the output folder for saving
