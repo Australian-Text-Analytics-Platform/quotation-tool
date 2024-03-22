@@ -15,6 +15,10 @@ If you do not have access to any of the above accounts, you can use the below li
 
 It may take a few minutes for Binder to launch the notebook and install the dependencies for the tool. Please be patient.
 
+## User Guide
+
+For instructions on how to use the Quotation Tool, please refer to the [Quotation Tool User Guide](documents/quotation_help_pages.pdf).
+
 ## Load the data
 <table style='margin-left: 10px'><tr>
 <td> <img width='45' src='./img/txt_icon.png'/> </td>
