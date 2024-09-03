@@ -120,7 +120,6 @@ class QuoteExtractor:
             quote_obj = {
                 "speaker": "",
                 "speaker_index": "",
-                "speaker_pos": [],
                 "quote": str(sent),
                 "quote_index": f"({quote_startchar},{quote_endchar})",
                 "verb": "",
@@ -158,7 +157,6 @@ class QuoteExtractor:
                 quote_obj = {
                     "speaker": "",
                     "speaker_index": "",
-                    "speaker_pos": [],
                     "quote": float_quote,
                     "quote_index": f"({quote_startchar},{quote_endchar})",
                     "verb": "",
@@ -348,7 +346,6 @@ class QuoteExtractor:
                                             "speaker_index": self.get_pretty_index(
                                                 speaker
                                             ),
-                                            "speaker_pos": [],
                                             "quote": str(sent),
                                             "quote_index": self.get_pretty_index(sent),
                                             "verb": str(verb),
@@ -357,8 +354,6 @@ class QuoteExtractor:
                                             "quote_type": quote_type,
                                             "is_floating_quote": False,
                                         }
-                                        if quote_obj["speaker"]:
-                                            quote_obj["speaker_pos"] = [t.pos_ for t in speaker]
                                         quote_list.append(quote_obj)
                                     break
             elif word.dep_ in ("prep"):
@@ -380,7 +375,6 @@ class QuoteExtractor:
                     quote_obj = {
                         "speaker": str(speaker),
                         "speaker_index": self.get_pretty_index(speaker),
-                        "speaker_pos": [],
                         "quote": str(sent),
                         "quote_index": self.get_pretty_index(sent),
                         "verb": "according to",
@@ -389,8 +383,6 @@ class QuoteExtractor:
                         "quote_type": "AccordingTo",
                         "is_floating_quote": False,
                     }
-                    if quote_obj["speaker"]:
-                        quote_obj["speaker_pos"] = [t.pos_ for t in speaker]
                     quote_list.append(quote_obj)
         return quote_list
 
@@ -426,7 +418,6 @@ class QuoteExtractor:
                 if sent_is_after_qcqsv_or_qcqvs_csv and found_floating_quote:
                     floating_quote["speaker"] = last_quote["speaker"]
                     floating_quote["speaker_index"] = last_quote["speaker_index"]
-                    floating_quote["speaker_pos"] = last_quote["speaker_pos"]
                     floating_quotes.append(floating_quote)
 
                 last_sent = sent
@@ -454,25 +445,21 @@ class QuoteExtractor:
                         verb = ""
                         verb_index = ""
                         speaker = ""
-                        speaker_POS = []
                         speaker_index = "(0,0)"  # Assign non-empty quote-index to avoid breaking parse
                     else:
                         speaker = self.get_closest_speaker(verb)
                         if speaker:
                             speaker_index = self.get_pretty_index(speaker)
-                            speaker_POS = [speaker.pos_]
                             speaker = speaker.text
                         else:
                             speaker_index = "(0,0)"  # Assign non-empty quote-index to avoid breaking parse
                             speaker = ""
-                            speaker_POS = []
                         verb_index = self.get_pretty_index(verb)
                         verb = verb.text
                     if len(sent) > 6 and len(sent) < 100:
                         quote_obj = {
                             "speaker": speaker,
                             "speaker_index": speaker_index,
-                            "speaker_pos": speaker_POS,
                             "quote": str(sent),
                             "quote_index": self.get_pretty_index(sent),
                             "verb": verb,
