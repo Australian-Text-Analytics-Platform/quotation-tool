@@ -68,6 +68,10 @@ criticize
 criticized
 criticizes
 criticizing
+criticise
+criticised
+criticises
+criticising
 declaim
 declaimed
 declaiming
