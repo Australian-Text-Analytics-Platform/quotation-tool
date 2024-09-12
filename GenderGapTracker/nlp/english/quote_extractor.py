@@ -348,7 +348,7 @@ class QuoteExtractor:
                                             ),
                                             "quote": str(sent),
                                             "quote_index": self.get_pretty_index(sent),
-                                            "verb": str(verb),
+                                            "verb": verb,
                                             "verb_index": self.get_pretty_index(verb),
                                             "quote_token_count": len(sent),
                                             "quote_type": quote_type,
@@ -442,7 +442,6 @@ class QuoteExtractor:
                     sent = doc[start : word.i + 1]
                     verb = self.get_closest_verb(doc, sent, len(doc))
                     if verb is None:
-                        verb = ""
                         verb_index = ""
                         speaker = None
                         speaker_index = "(0,0)"  # Assign non-empty quote-index to avoid breaking parse
@@ -454,7 +453,6 @@ class QuoteExtractor:
                             speaker_index = "(0,0)"  # Assign non-empty quote-index to avoid breaking parse
                             speaker = None
                         verb_index = self.get_pretty_index(verb)
-                        verb = verb.text
                     if len(sent) > 6 and len(sent) < 100:
                         quote_obj = {
                             "speaker": speaker,

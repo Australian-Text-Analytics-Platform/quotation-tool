@@ -20,6 +20,7 @@ import io
 import logging
 # import required packages
 import os
+import re
 import sys
 import traceback
 import warnings
@@ -47,6 +48,7 @@ from nltk.tokenize import sent_tokenize
 import ipywidgets as widgets
 from ipywidgets import Layout
 from IPython.display import display, clear_output, FileLink
+from pyexcelerate import Workbook
 
 # clone the GenderGapTracker GitHub page
 path = './'
@@ -118,6 +120,7 @@ class QuotationTool():
         # initiate variables to hold texts and quotes in pandas dataframes
         self.text_df = None
         self.quotes_df = None
+        self.non_quotes_df = None
         self.large_texts = []
         self.large_file_size = 1000000
 
@@ -397,7 +400,34 @@ class QuotationTool():
 
         return refs_ls
 
-    def get_quotes(self, inc_ent: list) -> pd.DataFrame:
+    def _get_index_tuple_from_str(self, index_str: str) -> Optional[tuple[int, int]]:
+        index_str_pattern = r'\((\d+),(\d+)\)'
+        match = re.search(index_str_pattern, index_str)
+        if match:
+            num1, num2 = match.groups()
+            return int(num1), int(num2)
+
+    def _extract_non_quote_text(self, text_doc: Doc, quotes: list[dict]) -> str:
+        excluded_ranges: list[tuple[int, int]] = []
+        excluded_cols: list[str] = ['quote_index', 'speaker_index', 'verb_index']
+        for quote in quotes:
+            for col in excluded_cols:
+                excluded_range = self._get_index_tuple_from_str(quote[col])
+                if excluded_range:
+                    excluded_ranges.append(excluded_range)
+
+        non_quote_chars: list[str] = []
+        for i, char in enumerate(text_doc.text):
+            char_is_quoted: bool = False
+            for start, end in excluded_ranges:
+                if start <= i <= end:
+                    char_is_quoted = True
+            if not char_is_quoted:
+                non_quote_chars.append(char)
+
+        return ''.join(non_quote_chars)
+
+    def extract_quotes(self, inc_ent: list) -> pd.DataFrame:
         '''
         Extract quotes and their meta-data (quote_id, quote_index, etc.) from the text
         and return as a pandas dataframe
@@ -410,6 +440,7 @@ class QuotationTool():
         print('This may take a while...')
         # create an empty list to store all detected quotes
         all_quotes = []
+        all_non_quotes = []
 
         # go through all the texts and start extracting quotes
         for row in tqdm(self.text_df.itertuples(), total=len(self.text_df)):
@@ -422,6 +453,8 @@ class QuotationTool():
 
                 # extract the quotes
                 quotes = self.qt.extract_quotes(doc=doc)
+                non_quoted_text = self._extract_non_quote_text(doc, quotes)
+                non_quoted = {'text_id': text_id, 'text_name': text_name, 'non_quoted_text': non_quoted_text}
 
                 # extract the named entities
                 speaks, qts = [str(quote['speaker']) for quote in quotes], [quote['quote'] for quote in quotes]
@@ -440,18 +473,23 @@ class QuotationTool():
                     speaker_coref_str = ','.join([ref.text for ref in speaker_coref_spans])
                     quote['speaker_coref'] = speaker_coref_str
                     quote['speaker'] = str(quote['speaker']) if quote['speaker'] else ""
+                    quote['verb'] = str(quote['verb']) if quote['verb'] else ""
+                    quote['quote'] = str(quote['quote']) if quote['quote'] else ""
 
                 # store them in all_quotes
                 all_quotes.extend(quotes)
+                all_non_quotes.append(non_quoted)
 
-            except Exception:
+            except Exception as e:
+                print(traceback.format_exc())
                 # this will provide some information in the case of an error
-                print('{} is too large. Consider breaking it down into smaller texts (< 1MB each file).'.format(
-                    text_name))
+                # print('{} is too large. Consider breaking it down into smaller texts (< 1MB each file).'.format(
+                #     text_name))
                 self.large_texts.append(text_name)
 
         # convert the outcome into a pandas dataframe
         self.quotes_df = pd.DataFrame.from_dict(all_quotes)
+        self.non_quotes_df = pd.DataFrame.from_dict(all_non_quotes)
 
         # convert the string format quote spans in the index columns to a tuple of integers
         for column in self.quotes_df.columns:
@@ -465,6 +503,9 @@ class QuotationTool():
                      'verb', 'verb_index', 'quote_token_count', 'quote_type', 'is_floating_quote']
         self.quotes_df = self.quotes_df.reindex(columns=new_index)
 
+        return self.quotes_df
+
+    def get_quotes(self) -> Optional[pd.DataFrame]:
         return self.quotes_df
 
     def add_entities(
@@ -1054,111 +1095,111 @@ class QuotationTool():
 
         return enter_n, top_n_option
 
+    def download(self, output_dir: str, file_name: str):
+        sheet_data: dict = dict()
+        sheet_data['full'] = [self.quotes_df.columns] + list(self.quotes_df.values)
+        sheet_data['verb_frequencies'] = self._sheet_verb_freqs()
+        sheet_data['is_floating_quote_frequencies'] = self._sheet_is_floating_quote_freqs()
+        sheet_data['speaker_frequencies'] = self._sheet_speaker_freqs()
+        sheet_data['speaker_entity_name_frequencies'] = self._sheet_speaker_ent_name_freqs()
+        sheet_data['speaker_entity_type_frequencies'] = self._sheet_speaker_ent_type_freqs()
+        sheet_data['quote_entity_name_frequencies'] = self._sheet_quote_ent_name_freqs()
+        sheet_data['quote_entity_type_frequencies'] = self._sheet_quote_ent_type_freqs()
+        sheet_data['quote_type_frequencies'] = self._sheet_quote_type_freqs()
+        sheet_data['non_quoted_text'] = self._sheet_non_quoted_text()
+        wb = Workbook()
+        for sheet_name, data in sheet_data.items():
+            wb.new_sheet(sheet_name, data=data)
+        wb.save(output_dir + file_name)
+        return DownloadFileLink(output_dir + file_name, file_name)
 
-def download(quotes_df: pd.DataFrame, output_dir: str, file_name: str):
-    from pyexcelerate import Workbook
-    sheet_data: dict = dict()
-    sheet_data['full'] = [quotes_df.columns] + list(quotes_df.values)
-    sheet_data['verb_frequencies'] = _sheet_verb_freqs(quotes_df)
-    sheet_data['is_floating_quote_frequencies'] = _sheet_is_floating_quote_freqs(quotes_df)
-    sheet_data['speaker_frequencies'] = _sheet_speaker_freqs(quotes_df)
-    sheet_data['speaker_entity_name_frequencies'] = _sheet_speaker_ent_name_freqs(quotes_df)
-    sheet_data['speaker_entity_type_frequencies'] = _sheet_speaker_ent_type_freqs(quotes_df)
-    sheet_data['quote_entity_name_frequencies'] = _sheet_quote_ent_name_freqs(quotes_df)
-    sheet_data['quote_entity_type_frequencies'] = _sheet_quote_ent_type_freqs(quotes_df)
-    sheet_data['quote_type_frequencies'] = _sheet_quote_type_freqs(quotes_df)
-    wb = Workbook()
-    for sheet_name, data in sheet_data.items():
-        wb.new_sheet(sheet_name, data=data)
-    wb.save(output_dir + file_name)
-    return DownloadFileLink(output_dir + file_name, file_name)
+    def _sheet_verb_freqs(self):
+        vcount = self.quotes_df.verb.apply(lambda v: v.strip().lower()).value_counts()
 
+        header = [['verb', 'frequency']]
+        flist = list(zip(vcount.index, vcount.values))
+        return header + flist
 
-def _sheet_verb_freqs(quotes_df):
-    vcount = quotes_df.verb.apply(lambda v: v.strip().lower()).value_counts()
+    def _sheet_is_floating_quote_freqs(self):
+        # is_floating_quote_frequencies
+        vcount = self.quotes_df.is_floating_quote.value_counts()
 
-    header = [['verb', 'frequency']]
-    flist = list(zip(vcount.index, vcount.values))
-    return header + flist
+        header = [['is_floating_quote', 'frequency']]
+        flist = list(zip(vcount.index, vcount.values))
 
+        return header + flist
 
-def _sheet_is_floating_quote_freqs(quotes_df):
-    # is_floating_quote_frequencies
-    vcount = quotes_df.is_floating_quote.value_counts()
+    def _sheet_speaker_freqs(self):
+        # vcount = self.quotes_df.speaker.apply(lambda s: s.lower()).value_counts()
+        spkrs = [spkr
+                 for spkrs in
+                 self.quotes_df.speaker.apply(lambda spkrs: set([s.strip().lower() for s in spkrs.split(",")])).to_list()
+                 for spkr in spkrs]
+        counter = Counter(spkrs)
 
-    header = [['is_floating_quote', 'frequency']]
-    flist = list(zip(vcount.index, vcount.values))
+        header = [['speaker', 'frequency']]
+        # flist = list(zip(vcount.index, vcount.values))
+        flist = counter.most_common(len(counter))
 
-    return header + flist
+        return header + flist
 
+    def _sheet_speaker_ent_name_freqs(self):
+        spkr_names = (name for names in
+                      self.quotes_df.speaker_entities.apply(lambda ents: set([ent[0].strip().lower() for ent in ents])).to_list()
+                      for name in names)
+        counter = Counter(spkr_names)
 
-def _sheet_speaker_freqs(quotes_df):
-    # vcount = quotes_df.speaker.apply(lambda s: s.lower()).value_counts()
-    spkrs = [spkr
-             for spkrs in
-             quotes_df.speaker.apply(lambda spkrs: set([s.strip().lower() for s in spkrs.split(",")])).to_list()
-             for spkr in spkrs]
-    counter = Counter(spkrs)
+        header = [['speaker entity name', 'frequency']]
+        flist = counter.most_common(len(counter))
 
-    header = [['speaker', 'frequency']]
-    # flist = list(zip(vcount.index, vcount.values))
-    flist = counter.most_common(len(counter))
+        return header + flist
 
-    return header + flist
+    def _sheet_speaker_ent_type_freqs(self):
+        spkr_ents = (ent for ents in
+                     self.quotes_df.speaker_entities.apply(lambda ents: set([ent[1].strip().upper() for ent in ents])).to_list()
+                     for ent in ents)
+        counter = Counter(spkr_ents)
 
+        header = [['speaker entity type', 'frequency']]
+        flist = counter.most_common(len(counter))
 
-def _sheet_speaker_ent_name_freqs(quotes_df):
-    spkr_names = (name for names in
-                  quotes_df.speaker_entities.apply(lambda ents: set([ent[0].strip().lower() for ent in ents])).to_list()
-                  for name in names)
-    counter = Counter(spkr_names)
+        return header + flist
 
-    header = [['speaker entity name', 'frequency']]
-    flist = counter.most_common(len(counter))
+    def _sheet_quote_ent_name_freqs(self):
+        quote_names = (name for names in
+                       self.quotes_df.quote_entities.apply(lambda ents: set([ent[0].strip().lower() for ent in ents])).to_list()
+                       for name in names)
+        counter = Counter(quote_names)
 
-    return header + flist
+        header = [['quote entity name', 'frequency']]
+        flist = counter.most_common(len(counter))
 
+        return header + flist
 
-def _sheet_speaker_ent_type_freqs(quotes_df):
-    spkr_ents = (ent for ents in
-                 quotes_df.speaker_entities.apply(lambda ents: set([ent[1].strip().upper() for ent in ents])).to_list()
-                 for ent in ents)
-    counter = Counter(spkr_ents)
+    def _sheet_quote_ent_type_freqs(self):
+        quote_ents = (ent for ents in
+                      self.quotes_df.quote_entities.apply(lambda ents: set([ent[1].strip().upper() for ent in ents])).to_list()
+                      for ent in ents)
+        counter = Counter(quote_ents)
 
-    header = [['speaker entity type', 'frequency']]
-    flist = counter.most_common(len(counter))
+        header = [['quote entity type', 'frequency']]
+        flist = counter.most_common(len(counter))
 
-    return header + flist
+        return header + flist
 
+    def _sheet_quote_type_freqs(self):
+        counter = Counter(self.quotes_df['quote_type'])
 
-def _sheet_quote_ent_name_freqs(quotes_df):
-    quote_names = (name for names in
-                   quotes_df.quote_entities.apply(lambda ents: set([ent[0].strip().lower() for ent in ents])).to_list()
-                   for name in names)
-    counter = Counter(quote_names)
+        header = [['quote type', 'frequency']]
+        flist = counter.most_common(len(counter))
 
-    header = [['quote entity name', 'frequency']]
-    flist = counter.most_common(len(counter))
+        return header + flist
 
-    return header + flist
+    def _sheet_non_quoted_text(self):
+        header = ['text_id', 'text_name', 'non_quoted_text']
+        non_quoted = [header]
+        for non_quote_row in self.non_quotes_df.itertuples():
+            text_non_quoted = [non_quote_row.text_id, non_quote_row.text_name, non_quote_row.non_quoted_text]
+            non_quoted.append(text_non_quoted)
 
-
-def _sheet_quote_ent_type_freqs(quotes_df):
-    quote_ents = (ent for ents in
-                  quotes_df.quote_entities.apply(lambda ents: set([ent[1].strip().upper() for ent in ents])).to_list()
-                  for ent in ents)
-    counter = Counter(quote_ents)
-
-    header = [['quote entity type', 'frequency']]
-    flist = counter.most_common(len(counter))
-
-    return header + flist
-
-
-def _sheet_quote_type_freqs(quotes_df):
-    counter = Counter(quotes_df['quote_type'])
-
-    header = [['quote type', 'frequency']]
-    flist = counter.most_common(len(counter))
-
-    return header + flist
+        return non_quoted
