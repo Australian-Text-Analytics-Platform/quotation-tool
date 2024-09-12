@@ -342,7 +342,7 @@ class QuoteExtractor:
                                         and is_valid_speaker
                                     ):
                                         quote_obj = {
-                                            "speaker": str(speaker),
+                                            "speaker": speaker,
                                             "speaker_index": self.get_pretty_index(
                                                 speaker
                                             ),
@@ -373,7 +373,7 @@ class QuoteExtractor:
                     # if is_valid_quote and is_valid_type and is_valid_speaker:
                     # TODO: How to validate these quotes? what is the quote type?
                     quote_obj = {
-                        "speaker": str(speaker),
+                        "speaker": speaker,
                         "speaker_index": self.get_pretty_index(speaker),
                         "quote": str(sent),
                         "quote_index": self.get_pretty_index(sent),
@@ -444,16 +444,15 @@ class QuoteExtractor:
                     if verb is None:
                         verb = ""
                         verb_index = ""
-                        speaker = ""
+                        speaker = None
                         speaker_index = "(0,0)"  # Assign non-empty quote-index to avoid breaking parse
                     else:
                         speaker = self.get_closest_speaker(verb)
                         if speaker:
                             speaker_index = self.get_pretty_index(speaker)
-                            speaker = speaker.text
                         else:
                             speaker_index = "(0,0)"  # Assign non-empty quote-index to avoid breaking parse
-                            speaker = ""
+                            speaker = None
                         verb_index = self.get_pretty_index(verb)
                         verb = verb.text
                     if len(sent) > 6 and len(sent) < 100:

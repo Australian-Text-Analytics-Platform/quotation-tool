@@ -7,7 +7,6 @@ import traceback
 from datetime import datetime, timedelta
 from multiprocessing import Pool, cpu_count
 
-import neuralcoref
 import requests
 import spacy
 from bson import ObjectId
@@ -15,7 +14,6 @@ from spacy.pipeline import EntityRuler
 
 import gender_predictor
 import utils
-from config import config
 from quote_extractor import QuoteExtractor
 
 logger = utils.create_logger(
@@ -61,6 +59,15 @@ def run_pool(poolsize, chunksize):
     pool.close()
 
 
+def mentions_to_spans(doc: spacy.Doc, mentions: list) -> list[spacy.Span]:
+    span_ls: list[spacy.Span] = []
+    for ment in mentions:
+        mention_span = doc[ment.root_index:ment.root_index + 1]
+        span_ls.append(mention_span)
+
+    return span_ls
+
+
 class EntityGenderAnnotator:
     def __init__(self, config) -> None:
         self.nlp = config["spacy_lang"]
@@ -77,15 +84,15 @@ class EntityGenderAnnotator:
           1. Merge NEs based on exact match
           2. merge NEs based on partial match
         """
-        # ne_dict and ne_cluster are dictionaries which keys are PERSON named entities extracted from the text and values
-        #  are mentions of that named entity in the text. Mention clusters come from coreference clustering algorithm.
+        # ne_dict and ne_chains are dictionaries which keys are PERSON named entities extracted from the text and values
+        #  are mentions of that named entity in the text. Mention chains come from coreference chaining algorithm.
         ne_dict = {}
-        ne_clust = {}
+        ne_chains = {}
         # It's highly recommended to clean nes before merging them. They usually contain invalid characters
         person_nes = [x for x in doc_coref.ents if x.label_ == "PERSON"]
-        # in this for loop we try to merge clusters detected in coreference clustering
+        # in this for loop we try to merge chains detected in coreference chaining
 
-        # ----- Part A: assign clusters to person named entities
+        # ----- Part A: assign chains to person named entities
         for ent in person_nes:
             # Sometimes we get noisy characters in name entities
             ent_cleaned = utils.clean_ne(str(ent))
@@ -94,48 +101,49 @@ class EntityGenderAnnotator:
 
             ent_set = set(range(ent.start_char, ent.end_char))
             found = False
-            # if no coreference clusters is detected in the document
-            if doc_coref._.coref_clusters is None:
+            # if no coreference chains is detected in the document
+            if doc_coref._.coref_chains is None:
                 ne_dict[ent] = []
-                ne_clust[ent] = -1
+                ne_chains[ent] = -1
 
             else:
-                for cluster in doc_coref._.coref_clusters:
-                    for ment in cluster.mentions:
+                for i, chain in enumerate(doc_coref._.coref_chains.chains):
+                    mention_spans = mentions_to_spans(doc_coref, chain.mentions)
+                    for ment in mention_spans:
                         ment_set = set(range(ment.start_char, ment.end_char))
                         if self.has_coverage(ent_set, ment_set):
-                            ne_dict[ent] = cluster
-                            ne_clust[ent] = cluster.i
+                            ne_dict[ent] = chain
+                            ne_chains[ent] = i
                             found = True
                             break
                     if found:
                         break
                 if not found:
                     ne_dict[ent] = []
-                    ne_clust[ent] = -1
+                    ne_chains[ent] = -1
 
-        # ----- Part B: Merge clusters in ne_dict based on exact match of their representative (PERSON named entities)
+        # ----- Part B: Merge chains in ne_dict based on exact match of their representative (PERSON named entities)
         merged_nes = {}
-        for ne, cluster in zip(ne_dict.keys(), ne_dict.values()):
+        for ne, chain in zip(ne_dict.keys(), ne_dict.values()):
             ne_clean_text = utils.clean_ne(str(ne))
-            if not cluster:
-                cluster_id = [-1]
+            if not chain:
+                chain_id = [-1]
                 mentions = []
             else:
-                cluster_id = [cluster.i]
-                mentions = cluster.mentions
+                chain_id = [ne_chains[ne]]
+                mentions = mentions_to_spans(doc_coref, chain.mentions)
 
-            # check if we already have a unique cluster with same representative
+            # check if we already have a unique chain with same representative
             if ne_clean_text in merged_nes.keys():
                 retrieved = merged_nes[ne_clean_text]
                 lst = retrieved["mentions"]
                 lst = lst + [ne] + mentions
-                cls = retrieved["cluster_id"]
-                cls = cls + cluster_id
-                merged_nes[ne_clean_text] = {"mentions": lst, "cluster_id": cls}
+                cls = retrieved["chain_id"]
+                cls = cls + chain_id
+                merged_nes[ne_clean_text] = {"mentions": lst, "chain_id": cls}
             else:
                 tmp = [ne] + mentions
-                merged_nes[ne_clean_text] = {"mentions": tmp, "cluster_id": cluster_id}
+                merged_nes[ne_clean_text] = {"mentions": tmp, "chain_id": chain_id}
 
         # ----- Part C: do a complex merge
         complex_merged_nes, _ = self.complex_merge(merged_nes)
@@ -261,7 +269,7 @@ class EntityGenderAnnotator:
             q_set = set(range(q_start, q_end))
 
             quote_aligned = False
-            # search in all of the named entity mentions in it's cluster for the speaker span.
+            # search in all of the named entity mentions in it's chain for the speaker span.
             for ne, mentions in zip(nes.keys(), nes.values()):
                 if quote_aligned:
                     break

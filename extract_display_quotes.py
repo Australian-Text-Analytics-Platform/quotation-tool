@@ -21,9 +21,11 @@ import logging
 # import required packages
 import os
 import sys
+import traceback
 import warnings
 from collections import Counter
 from pathlib import Path
+from typing import Optional, Union
 from zipfile import ZipFile
 
 import nltk
@@ -34,7 +36,8 @@ import spacy
 # matplotlib: visualization tool
 from matplotlib import pyplot as plt
 from spacy import displacy
-from spacy.tokens import Span
+from spacy.tokens import Span, Doc, Token
+import coreferee
 from tqdm import tqdm
 
 nltk.download('punkt')
@@ -109,6 +112,7 @@ class QuotationTool():
         print('Loading spaCy language model...')
         print('This may take a while...')
         self.nlp = spacy.load('en_core_web_lg')
+        self.nlp.add_pipe('coreferee')
         print('Finished loading.')
 
         # initiate variables to hold texts and quotes in pandas dataframes
@@ -359,6 +363,40 @@ class QuotationTool():
             for string in list_of_string
         ]
 
+    def extract_most_specific_refs(self, doc: Doc, speaker: Union[Span, Token, None]) -> list[Span]:
+        '''
+        Iterates over the tokens in the span, finds the first token with a coref_chains entry assigned by coreferee, and extracts the most specific references as a list of Spans.
+        If none of the tokens in the span have a co-reference, returns an empty list.
+        If the speaker_span has multiple references (i.e. plural "they"), the list will be populated with multiple Spans.
+        '''
+        if (not self.nlp.has_pipe("coreferee")) or (speaker is None):
+            return []
+        if isinstance(speaker, Token):
+            speaker = Span(doc, speaker.i, speaker.i + 1)
+
+        # Allows for resolving the full name of the reference tokens
+        rules_analyzer = self.nlp.get_pipe('coreferee').annotator.rules_analyzer
+
+        refs: set[Span] = set()
+        for tok in speaker:
+            coref_chains = tok._.coref_chains
+            if len(coref_chains) == 0:
+                continue
+
+            for chain in coref_chains:
+                mention_idx = chain.most_specific_mention_index
+                mention_tok = doc[chain[mention_idx].root_index]
+                resolved_ref_ls = rules_analyzer.get_propn_subtree(mention_tok)
+                if len(resolved_ref_ls) == 0:
+                    resolved_ref_ls = [mention_tok]
+                name_i_ls = [resolved_ref_ls[0].i, resolved_ref_ls[-1].i]
+                ref_span = Span(doc, min(name_i_ls), max(name_i_ls) + 1)
+                refs.add(ref_span)
+
+        refs_ls = list(refs)
+
+        return refs_ls
+
     def get_quotes(self, inc_ent: list) -> pd.DataFrame:
         '''
         Extract quotes and their meta-data (quote_id, quote_index, etc.) from the text
@@ -386,7 +424,7 @@ class QuotationTool():
                 quotes = self.qt.extract_quotes(doc=doc)
 
                 # extract the named entities
-                speaks, qts = [quote['speaker'] for quote in quotes], [quote['quote'] for quote in quotes]
+                speaks, qts = [str(quote['speaker']) for quote in quotes], [quote['quote'] for quote in quotes]
                 speak_ents = self.extract_inc_ent(speaks, doc, inc_ent)
                 quote_ents = self.extract_inc_ent(qts, doc, inc_ent)
 
@@ -398,10 +436,15 @@ class QuotationTool():
                     quote['speaker_entities'] = list(set(speak_ents[n]))
                     quote['quote_entities'] = list(set(quote_ents[n]))
 
+                    speaker_coref_spans = self.extract_most_specific_refs(doc, quote['speaker'])
+                    speaker_coref_str = ','.join([ref.text for ref in speaker_coref_spans])
+                    quote['speaker_coref'] = speaker_coref_str
+                    quote['speaker'] = str(quote['speaker']) if quote['speaker'] else ""
+
                 # store them in all_quotes
                 all_quotes.extend(quotes)
 
-            except:
+            except Exception:
                 # this will provide some information in the case of an error
                 print('{} is too large. Consider breaking it down into smaller texts (< 1MB each file).'.format(
                     text_name))
@@ -418,7 +461,7 @@ class QuotationTool():
 
         # re-arrange the columns
         new_index = ['text_id', 'text_name', 'quote_id', 'quote', 'quote_index', 'quote_entities',
-                     'speaker', 'speaker_index', 'speaker_entities',
+                     'speaker', 'speaker_index', 'speaker_coref', 'speaker_entities',
                      'verb', 'verb_index', 'quote_token_count', 'quote_type', 'is_floating_quote']
         self.quotes_df = self.quotes_df.reindex(columns=new_index)
 
