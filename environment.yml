@@ -13,7 +13,7 @@ dependencies:
   - matplotlib=3.7.2
   - spacy=3.4.4
   - nltk=3.7
-  - panel=1.1.1
+  - panel=1.4.5
   - ipywidgets=8.1.5
   - jupyter=1.1.1
   - pip
@@ -21,4 +21,5 @@ dependencies:
       - coreferee==1.4.1
       - pymongo==4.1.1
       - pyexcelerate==0.10.0
+      - atap-corpus-slicer==0.2.2
       - https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.4.1/en_core_web_lg-3.4.1-py3-none-any.whl

@@ -44,6 +44,10 @@ from tqdm import tqdm
 nltk.download('punkt')
 from nltk.tokenize import sent_tokenize
 
+from atap_corpus_slicer import CorpusSlicer
+from atap_corpus_loader import CorpusLoader, DataFrameCorpus, EventType
+
+
 # ipywidgets: tools for interactive browser controls in Jupyter notebooks
 import ipywidgets as widgets
 from ipywidgets import Layout
@@ -124,40 +128,8 @@ class QuotationTool():
         self.large_texts = []
         self.large_file_size = 1000000
 
-        # initiate the variables for file uploading
-        self.file_uploader = widgets.FileUpload(
-            description='Upload your files (txt, csv, xlsx or zip)',
-            accept='.txt, .xlsx, .csv, .zip',  # accepted file extension
-            multiple=True,  # True to accept multiple files
-            error='File upload unsuccessful. Please try again!',
-            layout=widgets.Layout(width='320px')
-        )
-
-        self.upload_out = widgets.Output()
-
-        # give notification when file is uploaded
-        def _cb(change):
-            with self.upload_out:
-                if self.file_uploader.value != ():
-                    # clear output and give notification that file is being uploaded
-                    clear_output()
-
-                    # check file size
-                    self.check_file_size(self.file_uploader)
-
-                    # reading uploaded files
-                    self.process_upload()
-
-                    # give notification when uploading is finished
-                    print('Finished uploading files.')
-                    print('{} text documents are loaded for tagging.'.format(self.text_df.shape[0]))
-
-                # clear saved value in cache and reset counter
-                self.file_uploader.value = ()
-
-        # observe when file is uploaded and display output
-        self.file_uploader.observe(_cb, names='value')
-        self.upload_box = widgets.VBox([self.file_uploader, self.upload_out])
+        self.file_uploader = CorpusSlicer(root_directory='corpus_files', model=self.nlp, run_logger=True)
+        self.file_uploader.corpus_loader.register_event_callback(EventType.BUILD, self.process_upload)
 
         # initiate other required variables
         self.html = None
@@ -167,115 +139,14 @@ class QuotationTool():
         # create an output folder if not already exist
         os.makedirs('output', exist_ok=True)
 
-    def check_file_size(self, uploaded_file):
-        '''
-        Function to check the uploaded file size
-        
-        Args:
-            uploaded_file: the uploaded file containing the text data
-        '''
-        # check total uploaded file size
-        total_file_size = sum([file['size'] for file in uploaded_file.value])
-        print('The total size of the upload is {:.2f} MB.'.format(total_file_size / 1000000))
-
-        # display warning for individual large files (>1MB)
-        large_text = [file['name'] for file in uploaded_file.value \
-                      if file['size'] > self.large_file_size and \
-                      file['name'].endswith('.txt')]
-        if len(large_text) > 0:
-            print('The following file(s) are larger than 1MB:', large_text)
-
-    def load_txt(self, file, n) -> list:
-        '''
-        Load individual txt file content and return a dictionary object, 
-        wrapped in a list so it can be merged with list of pervious file contents.
-        
-        Args:
-            file: the file containing the text data
-            n: index of the uploaded file (value='unzip' if the file is extracted form a zip file
-        '''
-        # read the unzip text file
-        if n == 'unzip':
-            # read the unzip text file
-            with open(file) as f:
-                temp = {'text_name': file.name[:-4],
-                        'text': f.read()
-                        }
-
-            os.remove(file)
-        else:
-            file = self.file_uploader.value[n]
-            # read and decode uploaded text
-            temp = {'text_name': file['name'][:-4],
-                    'text': codecs.decode(file['content'], encoding='utf-8', errors='replace')
-                    }
-
-            # check for unknown characters and display warning if any
-            unknown_count = temp['text'].count('�')
-            if unknown_count > 0:
-                print('We identified {} unknown character(s) in the following text: {}'.format(unknown_count,
-                                                                                               file['name'][:-4]))
-
-        return [temp]
-
-    def load_table(self, file, n) -> list:
-        '''
-        Load csv or xlsx file
-        
-        Args:
-            file: the file containing the excel or csv data
-            n: index of the uploaded file (value='unzip' if the file is extracted form a zip file
-        '''
-        if n != 'unzip':
-            file = io.BytesIO(self.file_uploader.value[n]['content'])
-
-        # read the file based on the file format
-        try:
-            temp_df = pd.read_csv(file)
-        except:
-            temp_df = pd.read_excel(file)
-
-        # check if the column text and text_name present in the table, if not, skip the current spreadsheet
-        if ('text' not in temp_df.columns) or ('text_name' not in temp_df.columns):
-            print('File {} does not contain the required header "text" and "text_name"'.format(
-                self.file_uploader.value[n]['name']))
-            return []
-
-        # return a list of dict objects
-        temp = temp_df[['text_name', 'text']].to_dict(orient='index').values()
-
-        return temp
-
-    def extract_zip(self, zip_file):
-        '''
-        Load zip file
-        
-        Args:
-            zip_file: the file containing the zipped data
-        '''
-        # create an input folder if not already exist
-        os.makedirs('input', exist_ok=True)
-
-        # read and decode the zip file
-        temp = io.BytesIO(zip_file['content'])
-
-        # open and extract the zip file
-        with ZipFile(temp, 'r') as zip:
-            # extract files
-            print('Extracting {}...'.format(zip_file['name']))
-            zip.extractall('./input/')
-
-        # clear up temp
-        temp = None
-
     def hash_gen(self, temp_df: pd.DataFrame) -> pd.DataFrame:
         '''
         Create column text_id by md5 hash of the text in text_df
-        
+
         Args:
             temp_df: the temporary pandas dataframe containing the text data
         '''
-        temp_df['text_id'] = temp_df['text'].apply(lambda t: hashlib.md5(t.encode('utf-8')).hexdigest())
+        temp_df['text_id'] = temp_df['text'].apply(lambda t: hashlib.md5(str(t).encode('utf-8')).hexdigest())
 
         return temp_df
 
@@ -293,57 +164,32 @@ class QuotationTool():
 
         return text
 
-    def process_upload(self, deduplication: bool = True):
+    def assign_sequential_text_name(self, row):
+        row['text_name'] = f'text{row.index}'
+        return row
+
+    def process_upload(self, corpus: DataFrameCorpus, deduplication: bool = True):
         '''
-        Pre-process uploaded .txt files into pandas dataframe
+        Pre-process uploaded corpus to ensure correct metadata
 
         Args:
             deduplication: option to deduplicate text_df by text_id
         '''
-        # create placeholders to store all texts and zipped file names
-        all_data = [];
-        files = []
+        corpus_df = corpus.to_dataframe()
+        corpus_df.rename({corpus._COL_DOC: 'text'}, inplace=True, axis=1)
+        if 'filename' in corpus_df.columns:
+            corpus_df.rename({'filename': 'text_name'}, inplace=True, axis=1)
+        if 'text_name' not in corpus_df.columns:
+            corpus_df.apply(self.assign_sequential_text_name)
 
-        # read and store the uploaded files
-        uploaded_files = self.file_uploader.value
-
-        # extract zip files (if any)
-        for n, file in enumerate(uploaded_files):
-            files.append([file.name, n])
-            if file.name.lower().endswith('zip'):
-                self.extract_zip(self.file_uploader.value[n])
-                files.pop()
-
-        # add extracted files to files
-        for file_type in ['*.txt', '*.xlsx', '*.csv']:
-            files += [[file, 'unzip'] for file in Path('./input').rglob(file_type) if 'MACOSX' not in str(file)]
-
-        print('Reading uploaded files...')
-        print('This may take a while...')
-        # process and upload files
-        for file, n in tqdm(files):
-            # process text files
-            if str(file).lower().endswith('txt'):
-                text_dic = self.load_txt(file, n)
-            # process xlsx or csv files
-            else:
-                text_dic = self.load_table(file, n)
-            all_data.extend(text_dic)
-
-        # remove files and directory once finished
-        os.system('rm -r ./input')
-
-        # convert them into a pandas dataframe format and add unique id
-        self.text_df = pd.DataFrame.from_dict(all_data)
-        self.text_df = self.hash_gen(self.text_df)
-
-        # clear up all_data
-        all_data = [];
-        files = []
+        corpus_df = self.hash_gen(corpus_df)
+        corpus_df = corpus_df[['text_id', 'text_name', 'text']]
 
         # deduplicate the text_df by text_id
         if deduplication:
-            self.text_df.drop_duplicates(subset='text_id', keep='first', inplace=True)
+            corpus_df.drop_duplicates(subset='text_id', keep='first', inplace=True)
+
+        self.text_df = corpus_df
 
     def extract_inc_ent(
             self,
@@ -448,8 +294,7 @@ class QuotationTool():
             text_name = row.text_name
 
             try:
-                # process text using spacy
-                doc = self.nlp_preprocess(row.text)
+                doc = row.text
 
                 # extract the quotes
                 quotes = self.qt.extract_quotes(doc=doc)
@@ -588,8 +433,7 @@ class QuotationTool():
                    'top_offset_step': 14}
 
         # get the spaCy text 
-        current_text = self.text_df[self.text_df['text_name'] == text_name]['text'].to_list()[0]
-        doc = self.nlp_preprocess(current_text)
+        doc = self.text_df[self.text_df['text_name'] == text_name]['text'].to_list()[0]
 
         # create a mapping dataframe between the character index and token index from the spacy text.
         loc2tok_df = pd.DataFrame([(t.idx, t.i) for t in doc], columns=['loc', 'token'])
