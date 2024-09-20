@@ -14,9 +14,7 @@ The Gender Gap Tracker: Using Natural Language Processing to measure gender bias
 (https://doi.org/10.1371/journal.pone.0245533)
 '''
 
-import codecs
 import hashlib
-import io
 import logging
 # import required packages
 import os
@@ -25,9 +23,7 @@ import sys
 import traceback
 import warnings
 from collections import Counter
-from pathlib import Path
-from typing import Optional, Union
-from zipfile import ZipFile
+from typing import Optional
 
 import nltk
 # pandas: tools for data processing
@@ -37,16 +33,14 @@ import spacy
 # matplotlib: visualization tool
 from matplotlib import pyplot as plt
 from spacy import displacy
-from spacy.tokens import Span, Doc, Token
-import coreferee
+from spacy.tokens import Span, Doc
 from tqdm import tqdm
 
 nltk.download('punkt')
 from nltk.tokenize import sent_tokenize
 
 from atap_corpus_slicer import CorpusSlicer
-from atap_corpus_loader import CorpusLoader, DataFrameCorpus, EventType
-
+from atap_corpus_loader import DataFrameCorpus, EventType, CorpusLoader
 
 # ipywidgets: tools for interactive browser controls in Jupyter notebooks
 import ipywidgets as widgets
@@ -118,7 +112,6 @@ class QuotationTool():
         print('Loading spaCy language model...')
         print('This may take a while...')
         self.nlp = spacy.load('en_core_web_lg')
-        self.nlp.add_pipe('coreferee')
         print('Finished loading.')
 
         # initiate variables to hold texts and quotes in pandas dataframes
@@ -128,8 +121,9 @@ class QuotationTool():
         self.large_texts = []
         self.large_file_size = 1000000
 
-        self.file_uploader = CorpusSlicer(root_directory='corpus_files', model=self.nlp, run_logger=True)
-        self.file_uploader.corpus_loader.register_event_callback(EventType.BUILD, self.process_upload)
+        loader = CorpusLoader(root_directory='corpus_files', run_logger=True)
+        self.file_uploader = CorpusSlicer(corpus_loader=loader, model=self.nlp, run_logger=True)
+        loader.register_event_callback(EventType.BUILD, self.process_upload)
 
         # initiate other required variables
         self.html = None
@@ -153,9 +147,6 @@ class QuotationTool():
     def nlp_preprocess(self, text):
         '''
         Pre-process text and fit it with Spacy language model into the column "spacy_text"
-
-        Args:
-            temp_df: the temporary pandas dataframe containing the text data
         '''
         text = sent_tokenize(text)
         text = ' '.join(text)
@@ -211,40 +202,6 @@ class QuotationTool():
              if (str(ent) in string) & (ent.label_ in inc_ent)] \
             for string in list_of_string
         ]
-
-    def extract_most_specific_refs(self, doc: Doc, speaker: Union[Span, Token, None]) -> list[Span]:
-        '''
-        Iterates over the tokens in the span, finds the first token with a coref_chains entry assigned by coreferee, and extracts the most specific references as a list of Spans.
-        If none of the tokens in the span have a co-reference, returns an empty list.
-        If the speaker_span has multiple references (i.e. plural "they"), the list will be populated with multiple Spans.
-        '''
-        if (not self.nlp.has_pipe("coreferee")) or (speaker is None):
-            return []
-        if isinstance(speaker, Token):
-            speaker = Span(doc, speaker.i, speaker.i + 1)
-
-        # Allows for resolving the full name of the reference tokens
-        rules_analyzer = self.nlp.get_pipe('coreferee').annotator.rules_analyzer
-
-        refs: set[Span] = set()
-        for tok in speaker:
-            coref_chains = tok._.coref_chains
-            if len(coref_chains) == 0:
-                continue
-
-            for chain in coref_chains:
-                mention_idx = chain.most_specific_mention_index
-                mention_tok = doc[chain[mention_idx].root_index]
-                resolved_ref_ls = rules_analyzer.get_propn_subtree(mention_tok)
-                if len(resolved_ref_ls) == 0:
-                    resolved_ref_ls = [mention_tok]
-                name_i_ls = [resolved_ref_ls[0].i, resolved_ref_ls[-1].i]
-                ref_span = Span(doc, min(name_i_ls), max(name_i_ls) + 1)
-                refs.add(ref_span)
-
-        refs_ls = list(refs)
-
-        return refs_ls
 
     def _get_index_tuple_from_str(self, index_str: str) -> Optional[tuple[int, int]]:
         index_str_pattern = r'\((\d+),(\d+)\)'
@@ -314,9 +271,6 @@ class QuotationTool():
                     quote['speaker_entities'] = list(set(speak_ents[n]))
                     quote['quote_entities'] = list(set(quote_ents[n]))
 
-                    speaker_coref_spans = self.extract_most_specific_refs(doc, quote['speaker'])
-                    speaker_coref_str = ','.join([ref.text for ref in speaker_coref_spans])
-                    quote['speaker_coref'] = speaker_coref_str
                     quote['speaker'] = str(quote['speaker']) if quote['speaker'] else ""
                     quote['verb'] = str(quote['verb']) if quote['verb'] else ""
                     quote['quote'] = str(quote['quote']) if quote['quote'] else ""
@@ -344,7 +298,7 @@ class QuotationTool():
 
         # re-arrange the columns
         new_index = ['text_id', 'text_name', 'quote_id', 'quote', 'quote_index', 'quote_entities',
-                     'speaker', 'speaker_index', 'speaker_coref', 'speaker_entities',
+                     'speaker', 'speaker_index', 'speaker_entities',
                      'verb', 'verb_index', 'quote_token_count', 'quote_type', 'is_floating_quote']
         self.quotes_df = self.quotes_df.reindex(columns=new_index)
 
@@ -614,7 +568,7 @@ class QuotationTool():
                 top_n = top_n_option.value
 
                 # process the selected quote and/or speaker entities
-                which_ents = [];
+                which_ents = []
                 ent_types = []
                 if quote_box.value:
                     which_ents.append('quote_entities')
