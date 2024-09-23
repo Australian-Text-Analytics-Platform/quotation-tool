@@ -204,6 +204,7 @@ class QuotationTool():
         ]
 
     def _get_index_tuple_from_str(self, index_str: str) -> Optional[tuple[int, int]]:
+        # Range captured is inclusive for start and exclusive for end, similar to Python's range() functionality
         index_str_pattern = r'\((\d+),(\d+)\)'
         match = re.search(index_str_pattern, index_str)
         if match:
@@ -223,7 +224,7 @@ class QuotationTool():
         for i, char in enumerate(text_doc.text):
             char_is_quoted: bool = False
             for start, end in excluded_ranges:
-                if start <= i <= end:
+                if start <= i < end:
                     char_is_quoted = True
             if not char_is_quoted:
                 non_quote_chars.append(char)
