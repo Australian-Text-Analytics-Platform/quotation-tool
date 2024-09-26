@@ -40,7 +40,7 @@ nltk.download('punkt')
 from nltk.tokenize import sent_tokenize
 
 from atap_corpus_slicer import CorpusSlicer
-from atap_corpus_loader import DataFrameCorpus, EventType, CorpusLoader
+from atap_corpus_loader import DataFrameCorpus, CorpusLoader
 
 # ipywidgets: tools for interactive browser controls in Jupyter notebooks
 import ipywidgets as widgets
@@ -123,7 +123,7 @@ class QuotationTool():
 
         loader = CorpusLoader(root_directory='corpus_files', run_logger=True)
         self.file_uploader = CorpusSlicer(corpus_loader=loader, model=self.nlp, run_logger=True)
-        loader.register_event_callback(EventType.BUILD, self.process_upload)
+        loader.register_event_callback("build", self.process_upload)
 
         # initiate other required variables
         self.html = None
@@ -155,9 +155,9 @@ class QuotationTool():
 
         return text
 
-    def assign_sequential_text_name(self, row):
-        row['text_name'] = f'text{row.index}'
-        return row
+    def assign_sequential_text_name(self, df):
+        df['text_name'] = [f'text{i + 1}' for i in range(len(df))]
+        return df
 
     def process_upload(self, corpus: DataFrameCorpus, deduplication: bool = True):
         '''
@@ -171,7 +171,7 @@ class QuotationTool():
         if 'filename' in corpus_df.columns:
             corpus_df.rename({'filename': 'text_name'}, inplace=True, axis=1)
         if 'text_name' not in corpus_df.columns:
-            corpus_df.apply(self.assign_sequential_text_name)
+            corpus_df = self.assign_sequential_text_name(corpus_df)
 
         corpus_df = self.hash_gen(corpus_df)
         corpus_df = corpus_df[['text_id', 'text_name', 'text']]
