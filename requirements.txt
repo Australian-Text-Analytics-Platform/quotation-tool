@@ -1,5 +1,5 @@
 numpy==1.24.4
-pandas==2.0.3
+pandas~=2.1.0
 openpyxl==3.1.2
 matplotlib==3.7.2
 spacy==3.4.4
@@ -7,6 +7,7 @@ nltk==3.7
 panel==1.4.5
 ipywidgets==8.1.5
 jupyter==1.1.1
+ipykernel
 coreferee==1.4.1
 pymongo==4.6.3
 pyexcelerate==0.10.0
