@@ -2,6 +2,29 @@
 
 <b>Abstract:</b> This QuotationTool can be used to extract quotes from a text. In addition to extracting the quotes, the tool also provides information about who the speakers are, the location of the quotes (and the speakers) within the text, the identified named entities, etc., which can be useful for your text analysis.
 
+## Coreference feature
+
+This branch of the Quotation Tool contains an experimental coreference feature. This feature provides the proper name of the speaker when only a pronoun is provided. Considering the following text as an example:
+
+```text
+The Prime Minister said "Inflation is the primary concern of this government." He continued, "It is a pressing issue for every Australian."
+```
+
+Without the coreference feature, the second quote would be attributed to the speaker "He". With the coreference feature, the second quote would be attributed to the speaker "The Prime Minister".
+
+**Limitations**
+
+This feature is experimental and has not been merged into the main Quotation Tool because of a memory leak issue. A relatively small corpus will cause a relatively large amount of memory to be consumed. The Binder instances used to ensure the portability of the application have limited memory and this issue has caused the Quotation Tool to unexpectedly stop working. If coreference is not a key requirement in your analysis, it is advised to switch to the main Quotation Tool (found on the main branch).
+
+_Recommended solutions_
+
+If the corpus you are attempting to analyse is unable to be processed by the Quotation Tool, try one of the following potential solutions:
+
+- Divide the corpus into smaller chunks and process each one individually
+- Run the Quotation Tool on your own machine by downloading and running the code in the repository
+- Reduce the size of individual documents by extracting the relevant context. This can be done with the [ATAP Context Extractor](https://github.com/Australian-Text-Analytics-Platform/atap-context-extractor)
+
+
 ## Setup
 This tool has been designed for use with minimal setup from users. You are able to run it in the cloud and any dependencies with other packages will be installed for you automatically. In order to launch and use the tool, you just need to click the below icon.
 
