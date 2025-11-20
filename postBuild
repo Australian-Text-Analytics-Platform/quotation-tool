@@ -1,3 +1,11 @@
 #!/bin/bash
 
-python3 -m coreferee install en
+set -euo pipefail
+
+echo "Downloading spaCy model en_core_web_lg (moved out of environment solve)" >&2
+python -m spacy download en_core_web_lg
+
+echo "Installing coreferee English model" >&2
+python -m coreferee install en
+
+echo "Post-build steps completed." >&2
