@@ -7,12 +7,12 @@ pandas==2.1.4
 openpyxl==3.1.2
 matplotlib==3.8.2
 spacy==3.7.4
-spacy-legacy==3.0.12
+# spacy-legacy==3.0.12
 nltk==3.8.1
 ipywidgets==8.1.5
 pyexcelerate==0.10.0
 coreferee==1.5.0
-pymongo==4.6.3
+# pymongo==4.6.3
 atap-corpus-slicer==0.3.5
 
 # Optional: add panel back if truly needed for dashboard features
