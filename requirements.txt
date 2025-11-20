@@ -1,5 +1,21 @@
-## requirements.txt intentionally minimal for Binder.
-## All core packages are specified in environment.yml to avoid duplicate binary installs.
-## Leave this file present (empty of heavy deps) so repo2docker skips large pip reinstall phase.
-## If adding truly pip-only packages not already in environment.yml's pip section, list them here.
+## Pip-only fallback build (environment.yml removed due to mamba segfaults on Binder).
+## Keep version pins moderate; rely on manylinux wheels to reduce build time.
+## Large spaCy model downloaded separately in postBuild.
+
+numpy==1.26.4
+pandas==2.1.4
+openpyxl==3.1.2
+matplotlib==3.8.2
+spacy==3.7.4
+spacy-legacy==3.0.12
+nltk==3.8.1
+ipywidgets==8.1.5
+pyexcelerate==0.10.0
+coreferee==1.5.0
+pymongo==4.6.3
+atap-corpus-slicer==0.3.5
+
+# Optional: add panel back if truly needed for dashboard features
+# panel==1.4.5
+
 
