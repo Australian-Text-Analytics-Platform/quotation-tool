@@ -10,8 +10,6 @@ This tool has been designed for use with minimal setup from users. You are able 
 <b>Note:</b> Australian Access Federation (AAF) or Reannz Tuakiri (NZ) authentication is required.
 If you do not have access to AAF or NZ, you can use the below link to access the tool (this is a free Binder version, limited to 2GB memory only).
 
-If you do not have access to any of the above accounts, you can use the below link to access the tool (this is a free Binder version, limited to 2GB memory only).   
-
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)
 
 It may take a few minutes for Binder to launch the notebook and install the dependencies for the tool. Please be patient.
