@@ -47,3 +47,7 @@ This code has been adapted (with permission) from the [GenderGapTracker GitHub p
 If you find the Quotation Tool useful in your research, please cite the following:  
 
 Jufri, Sony & Sun, Chao (2022). Quotation Tool. v1.0. Australian Text Analytics Platform. Software. https://github.com/Australian-Text-Analytics-Platform/quotation-tool
+
+## Related notebooks
+We supported a team of researchers at the Australian National University, who built a [notebook](https://github.com/ANU-HDRH/quotation-tool) that documents a complete workflow for constructing statement-level datasets from raw news articles, using customised entity tagging and identification as well as context preservation. It integrates the Quotation Tool.
+
