@@ -1,7 +1,10 @@
 """Execute the tool's notebook(s) inside the built image and report errors.
 
 Config (smoke_test.json):
-  {"notebooks": [{"path": "x.ipynb", "must_pass_cells": null, "timeout": 1800}]}
+  {"imports": ["pkg.module", ...],
+   "notebooks": [{"path": "x.ipynb", "must_pass_cells": null, "timeout": 1800}]}
+
+imports: optional modules that must import inside the image (checked first).
 
 must_pass_cells: null -> every code cell must run without error; an integer N ->
 only the first N code cells must pass (later cells need interactive input such
@@ -14,7 +17,16 @@ from nbclient import NotebookClient
 cfg = json.load(open(sys.argv[1]))
 home = os.environ.get("REPO_DIR") or os.path.expanduser("~")
 failed = False
-for nbcfg in cfg["notebooks"]:
+os.chdir(home)
+sys.path.insert(0, home)
+for mod in cfg.get("imports", []):
+    try:
+        __import__(mod)
+        print(f"import {mod}: ok")
+    except Exception as e:
+        print(f"import {mod}: FAILED {type(e).__name__}: {e}")
+        failed = True
+for nbcfg in cfg.get("notebooks", []):
     path = os.path.join(home, nbcfg["path"])
     nb = nbformat.read(path, as_version=4)
     client = NotebookClient(

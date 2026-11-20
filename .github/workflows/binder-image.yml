@@ -62,15 +62,24 @@ jobs:
           docker tag "${IMAGE}:${TAG}" "${IMAGE}:latest"
           docker images "${IMAGE}"
 
-      - name: Smoke test - Jupyter server starts
+      - name: Smoke test - server starts the way BinderHub starts it
+        # BinderHub launches jupyterhub-singleuser and waits for /user/<name>/api,
+        # so do the same (with dummy hub settings) rather than plain `jupyter lab`.
         run: |
-          docker run -d --name smoke -p 8888:8888 "${IMAGE}:${TAG}" \
-            jupyter lab --ip=0.0.0.0 --port=8888 --ServerApp.token=smoke --no-browser
+          docker run -d --name smoke -p 8888:8888 \
+            -e JUPYTERHUB_API_TOKEN=smoke -e JUPYTERHUB_CLIENT_ID=jupyterhub-user-smoke \
+            -e JUPYTERHUB_API_URL=http://127.0.0.1:8081/hub/api -e JUPYTERHUB_USER=smoke \
+            -e JUPYTERHUB_SERVICE_PREFIX=/user/smoke/ -e JUPYTERHUB_BASE_URL=/ \
+            -e JUPYTERHUB_OAUTH_CALLBACK_URL=/user/smoke/oauth_callback \
+            "${IMAGE}:${TAG}" jupyterhub-singleuser --ip=0.0.0.0 --port=8888
           for i in $(seq 1 60); do
-            curl -sf "http://127.0.0.1:8888/api/status?token=smoke" && break
+            curl -sf http://127.0.0.1:8888/user/smoke/api && break
             sleep 2
           done
-          curl -sf "http://127.0.0.1:8888/api/status?token=smoke"
+          if ! curl -sf http://127.0.0.1:8888/user/smoke/api; then
+            docker logs smoke; exit 1
+          fi
+          echo
           docker exec smoke jupyter labextension list
           docker rm -f smoke
 
