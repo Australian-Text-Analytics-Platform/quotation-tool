@@ -71,6 +71,7 @@ jobs:
             -e JUPYTERHUB_API_URL=http://127.0.0.1:8081/hub/api -e JUPYTERHUB_USER=smoke \
             -e JUPYTERHUB_SERVICE_PREFIX=/user/smoke/ -e JUPYTERHUB_BASE_URL=/ \
             -e JUPYTERHUB_OAUTH_CALLBACK_URL=/user/smoke/oauth_callback \
+            -e JUPYTERHUB_SERVICE_URL=http://0.0.0.0:8888/user/smoke/ \
             "${IMAGE}:${TAG}" jupyterhub-singleuser --ip=0.0.0.0 --port=8888
           for i in $(seq 1 60); do
             curl -sf http://127.0.0.1:8888/user/smoke/api && break
