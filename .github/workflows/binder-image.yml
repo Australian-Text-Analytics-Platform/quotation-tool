@@ -64,15 +64,28 @@ jobs:
 
       - name: Smoke test - server starts the way BinderHub starts it
         # BinderHub launches jupyterhub-singleuser and waits for /user/<name>/api,
-        # so do the same (with dummy hub settings) rather than plain `jupyter lab`.
+        # so do the same rather than plain `jupyter lab`. jupyterhub-singleuser 5
+        # checks the hub at startup, so answer that check with a stub hub API.
         run: |
-          docker run -d --name smoke -p 8888:8888 \
+          python3 -c '
+          import http.server, json
+          class Hub(http.server.BaseHTTPRequestHandler):
+              def do_GET(self):
+                  body = json.dumps({"version": "5.3.0"}).encode()
+                  self.send_response(200)
+                  self.send_header("Content-Type", "application/json")
+                  self.send_header("Content-Length", str(len(body)))
+                  self.end_headers()
+                  self.wfile.write(body)
+          http.server.HTTPServer(("127.0.0.1", 8081), Hub).serve_forever()
+          ' &
+          docker run -d --name smoke --network host \
             -e JUPYTERHUB_API_TOKEN=smoke -e JUPYTERHUB_CLIENT_ID=jupyterhub-user-smoke \
             -e JUPYTERHUB_API_URL=http://127.0.0.1:8081/hub/api -e JUPYTERHUB_USER=smoke \
             -e JUPYTERHUB_SERVICE_PREFIX=/user/smoke/ -e JUPYTERHUB_BASE_URL=/ \
             -e JUPYTERHUB_OAUTH_CALLBACK_URL=/user/smoke/oauth_callback \
-            -e JUPYTERHUB_SERVICE_URL=http://0.0.0.0:8888/user/smoke/ \
-            "${IMAGE}:${TAG}" jupyterhub-singleuser --ip=0.0.0.0 --port=8888
+            -e JUPYTERHUB_SERVICE_URL=http://127.0.0.1:8888/user/smoke/ \
+            "${IMAGE}:${TAG}" jupyterhub-singleuser --ip=127.0.0.1 --port=8888
           for i in $(seq 1 60); do
             curl -sf http://127.0.0.1:8888/user/smoke/api && break
             sleep 2
