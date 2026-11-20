@@ -1,16 +1,25 @@
 # Quotation Tool
 
+> [!WARNING]
+> **This tool is archived and no longer supported or maintained.**
+> It was developed by the Australian Text Analytics Platform (ATAP), the previous phase of the
+> Language Data Commons of Australia (LDaCA). It is preserved as a frozen Docker image so that it
+> keeps launching on BinderHub as it last worked, but it will not be updated or fixed.
+> For current LDaCA text analytics tools, please use
+> [Wordflow](https://australian-text-analytics-platform.github.io/LDaCa_Text_Analytics_Tools/) and
+> [LADAL](https://ladal.edu.au).
+
 <b>Abstract:</b> This QuotationTool can be used to extract quotes from a text. In addition to extracting the quotes, the tool also provides information about who the speakers are, the location of the quotes (and the speakers) within the text, the identified named entities, etc., which can be useful for your text analysis.
 
 ## Setup
 This tool has been designed for use with minimal setup from users. You are able to run it in the cloud and any dependencies with other packages will be installed for you automatically. In order to launch and use the tool, you just need to click the below icon.
 
-[![Binder](https://binderhub.rc.nectar.org.au/badge_logo.svg)](https://binderhub.rc.nectar.org.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)  
+[![Binder](https://binderhub.rc.nectar.org.au/badge_logo.svg)](https://binderhub.rc.nectar.org.au/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/archived?labpath=quote_extractor_notebook.ipynb)  
 
 <b>Note:</b> Australian Access Federation (AAF) or Reannz Tuakiri (NZ) authentication is required.
 If you do not have access to AAF or NZ, you can use the below link to access the tool (this is a free Binder version, limited to 2GB memory only).
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/main?labpath=quote_extractor_notebook.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Australian-Text-Analytics-Platform/quotation-tool/archived?labpath=quote_extractor_notebook.ipynb)
 
 It may take a few minutes for Binder to launch the notebook and install the dependencies for the tool. Please be patient.
 
@@ -51,3 +60,14 @@ Jufri, Sony & Sun, Chao (2022). Quotation Tool. v1.0. Australian Text Analytics 
 ## Related notebooks
 We supported a team of researchers at the Australian National University, who built a [notebook](https://github.com/ANU-HDRH/quotation-tool) that documents a complete workflow for constructing statement-level datasets from raw news articles, using customised entity tagging and identification as well as context preservation. It integrates the Quotation Tool.
 
+## Run locally with Docker
+
+The frozen environment of this tool is published as the Docker image
+[`milysun/atap-quotation-tool`](https://hub.docker.com/r/milysun/atap-quotation-tool). With [Docker](https://docs.docker.com/get-docker/) installed, run:
+
+```bash
+docker run --rm -p 8888:8888 milysun/atap-quotation-tool:4bd7080d0217 jupyter lab --ip=0.0.0.0 --port=8888
+```
+
+then open the `http://127.0.0.1:8888/lab?token=...` link printed in the terminal.
+On Apple Silicon Macs add `--platform linux/amd64` after `docker run`.
