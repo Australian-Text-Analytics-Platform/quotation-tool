@@ -1,0 +1,5 @@
+{
+  "notebooks": [
+    {"path": "quote_extractor_notebook.ipynb", "must_pass_cells": 2, "timeout": 1800}
+  ]
+}

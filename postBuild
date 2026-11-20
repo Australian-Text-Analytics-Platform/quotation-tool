@@ -1,0 +1,5 @@
+#!/bin/bash
+# Bake NLTK data into the image so the tool does not depend on downloading it
+# at runtime (extract_display_quotes.py calls nltk.download('punkt') on import).
+set -euo pipefail
+python -m nltk.downloader -d "${CONDA_PREFIX:-$(python -c 'import sys; print(sys.prefix)')}/share/nltk_data" punkt
